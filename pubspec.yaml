@@ -12,19 +12,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Navegação
   go_router: ^14.0.0
 
-  # Injeção de dependência
   auto_injector: ^2.0.0
 
-  # Requisições HTTP
   dio: ^5.4.0
 
-  # Salvar token JWT localmente
   shared_preferences: ^2.2.0
 
-  # Gerência de estado
   signals_flutter: ^5.0.0
 
   image_picker: ^1.1.2

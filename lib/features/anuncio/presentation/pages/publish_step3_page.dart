@@ -171,7 +171,6 @@ class PublishStep3Page extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            // Resumo
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -202,7 +201,6 @@ class PublishStep3Page extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            // Checkbox confirmação
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

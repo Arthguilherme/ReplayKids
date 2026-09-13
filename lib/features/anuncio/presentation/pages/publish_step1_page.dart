@@ -246,7 +246,6 @@ class _FotoPreview extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          // Botão remover
           Positioned(
             top: 4,
             right: 4,

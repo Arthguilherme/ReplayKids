@@ -69,7 +69,7 @@ class _SignupPageState extends State<SignupPage> {
       );
       context.go(AppRouter.login);
     } else {
-      setState(() {}); // atualiza a mensagem de erro
+      setState(() {}); 
     }
   }
 
@@ -85,7 +85,7 @@ class _SignupPageState extends State<SignupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Botão voltar
+              
               InkWell(
                 onTap: () => context.go(AppRouter.login),
                 borderRadius: BorderRadius.circular(20),
@@ -141,7 +141,6 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 10),
 
-              // Dropdown de cidade
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -204,7 +203,6 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 14),
 
-              // Checkbox de termos
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -269,7 +267,6 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 18),
 
-              // Mensagem de erro
               if (_controller.mensagemErro != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -279,7 +276,6 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
 
-              // Botão criar conta
               SizedBox(
                 height: 48,
                 width: double.infinity,

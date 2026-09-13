@@ -10,7 +10,6 @@ class UsuarioModel extends UsuarioEntity {
     super.cidade,
   });
 
-  // Para o SQLite (Map do banco)
   factory UsuarioModel.fromMap(Map<String, dynamic> map) {
     return UsuarioModel(
       id: map['id'] as int?,
@@ -32,7 +31,6 @@ class UsuarioModel extends UsuarioEntity {
     };
   }
 
-  // Para API REST (JSON)
   factory UsuarioModel.fromJson(Map<String, dynamic> json) {
     return UsuarioModel(
       id: json['id'],
