@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
-import '../../features/produtos/presentation/pages/feed_page.dart';
+import '../../features/main/main_page.dart';
 import '../../features/anuncio/presentation/pages/publish_step1_page.dart';
 
 class AppRouter {
@@ -22,7 +22,7 @@ class AppRouter {
       ),
       GoRoute(
         path: feed,
-        builder: (context, state) => const FeedPage(),
+        builder: (context, state) => const MainPage()
       ),
       GoRoute(
         path: publicar,
