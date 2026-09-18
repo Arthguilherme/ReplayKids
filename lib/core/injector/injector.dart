@@ -10,6 +10,7 @@ import '../../features/anuncio/domain/repositories/anuncio_repository.dart';
 import '../../features/anuncio/presentation/controllers/publish_controller.dart';
 import '../../features/anuncio/data/datasources/anuncio_datasource.dart';
 import '../../features/auth/presentation/controllers/signup_controller.dart';
+import '../../features/perfil/data/datasources/perfil_datasource.dart';
 
 final injector = AutoInjector();
 bool _initialized = false;
@@ -30,6 +31,8 @@ void setupInjector() {
 
   injector.add(SignupController.new);
 
+  injector.addSingleton(PerfilDatasource.new);
+  
   injector.commit();
 }
 
