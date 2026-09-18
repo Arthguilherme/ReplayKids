@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart';
+import 'package:replaykids/core/injector/injector.dart';
+import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -15,6 +18,9 @@ class _DetalhesPageState extends State<DetalhesPage> {
   int _fotoAtual = 0;
   bool _favoritado = false;
 
+  final _repository = injector.get<AnuncioRepository>();
+  final _usuarioAtual = Supabase.instance.client.auth.currentUser;
+
   @override
   Widget build(BuildContext context) {
     final anuncio = widget.anuncio;
@@ -23,16 +29,13 @@ class _DetalhesPageState extends State<DetalhesPage> {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          
           CustomScrollView(
             slivers: [
-              
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: 320,
                   child: Stack(
                     children: [
-                      
                       anuncio.fotos.isEmpty
                           ? Container(
                               color: AppColors.c100,
@@ -50,7 +53,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                                 width: double.infinity,
                               ),
                             ),
-
                       Positioned(
                         top: 0,
                         left: 0,
@@ -66,7 +68,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           ),
                         ),
                       ),
-
                       Positioned(
                         top: 48,
                         left: 16,
@@ -75,16 +76,14 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           onTap: () => Navigator.maybePop(context),
                         ),
                       ),
-
                       Positioned(
                         top: 48,
                         right: 16,
                         child: _CircleButton(
-                          icon: Icons.flag_outlined,
-                          onTap: () {},
+                          icon: Icons.more_vert,
+                          onTap: () => _mostrarOpcoes(),
                         ),
                       ),
-
                       if (anuncio.fotos.length > 1)
                         Positioned(
                           bottom: 12,
@@ -114,7 +113,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                   ),
                 ),
               ),
-
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
@@ -155,7 +153,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         ],
                       ),
                       const SizedBox(height: 8),
-
                       Text(
                         anuncio.isVenda ? 'R\$ ${anuncio.preco}' : 'Doação',
                         style: const TextStyle(
@@ -165,7 +162,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         ),
                       ),
                       const SizedBox(height: 10),
-
                       Row(
                         children: [
                           const Icon(Icons.location_on_outlined,
@@ -180,8 +176,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           ),
                           const SizedBox(width: 8),
                           const Text('•',
-                              style:
-                                  TextStyle(color: AppColors.neutral400)),
+                              style: TextStyle(color: AppColors.neutral400)),
                           const SizedBox(width: 8),
                           const Icon(Icons.child_care_outlined,
                               size: 14, color: AppColors.neutral500),
@@ -196,10 +191,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
-
                       const Divider(color: AppColors.neutral100),
                       const SizedBox(height: 16),
-
                       const Text(
                         'Descrição',
                         style: TextStyle(
@@ -218,10 +211,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       const Divider(color: AppColors.neutral100),
                       const SizedBox(height: 16),
-
                       Row(
                         children: [
                           Container(
@@ -271,7 +262,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
               ),
             ],
           ),
-
           Positioned(
             bottom: 0,
             left: 0,
@@ -306,7 +296,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
                   GestureDetector(
                     onTap: () => setState(() => _favoritado = !_favoritado),
                     child: Container(
@@ -333,6 +322,81 @@ class _DetalhesPageState extends State<DetalhesPage> {
         ],
       ),
     );
+  }
+
+  void _mostrarOpcoes() {
+    final ehDono = widget.anuncio.usuarioId == _usuarioAtual?.id;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.neutral200,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (ehDono)
+              ListTile(
+                leading: const Icon(Icons.delete_outline, color: Colors.red),
+                title: const Text(
+                  'Apagar anúncio',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _confirmarDelecao();
+                },
+              ),
+            if (!ehDono)
+              ListTile(
+                leading: const Icon(Icons.flag_outlined,
+                    color: AppColors.neutral700),
+                title: const Text('Denunciar anúncio'),
+                onTap: () => Navigator.pop(context),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmarDelecao() async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Apagar anúncio'),
+        content: const Text(
+            'Tem certeza que deseja apagar este anúncio? Esta ação não pode ser desfeita.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Apagar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar == true && mounted) {
+      await _repository.deletar(widget.anuncio.id);
+      if (mounted) Navigator.maybePop(context);
+    }
   }
 }
 

@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
           border: Border(top: BorderSide(color: AppColors.neutral100)),
         ),
         child: BottomNavigationBar(
-          currentIndex: _abaAtual < 2 ? _abaAtual : _abaAtual - 1,
+          currentIndex: _abaAtual < 2 ? _abaAtual : _abaAtual + 1,
           onTap: (i) {
             if (i == 2) {
               Navigator.push(
@@ -44,7 +44,8 @@ class _MainPageState extends State<MainPage> {
               ).then((_) => setState(() {}));
               return;
             }
-            setState(() => _abaAtual = i < 2 ? i : i + 1);
+            final novaAba = i < 2 ? i : i - 1;
+            setState(() => _abaAtual = novaAba);
           },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,

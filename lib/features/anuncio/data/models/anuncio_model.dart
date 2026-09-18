@@ -4,6 +4,7 @@ import '../../domain/entities/anuncio_entity.dart';
 class AnuncioModel extends AnuncioEntity {
   AnuncioModel({
     required super.id,
+    super.usuarioId,
     required super.titulo,
     required super.descricao,
     required super.condicao,
@@ -18,6 +19,7 @@ class AnuncioModel extends AnuncioEntity {
 factory AnuncioModel.fromMap(Map<String, dynamic> map) {
   return AnuncioModel(
     id: map['id'] as int,
+    usuarioId: map['usuario_id'] as String?,
     titulo: map['titulo'] as String,
     descricao: map['descricao'] as String,
     condicao: map['condicao'] as String,

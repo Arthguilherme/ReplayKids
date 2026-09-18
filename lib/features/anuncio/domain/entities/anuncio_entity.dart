@@ -1,5 +1,6 @@
 class AnuncioEntity {
   final int id;
+  final String? usuarioId;
   final String titulo;
   final String descricao;
   final String condicao;
@@ -11,6 +12,7 @@ class AnuncioEntity {
 
 AnuncioEntity({
     required this.id,
+    this.usuarioId,
     required this.titulo,
     required this.descricao,
     required this.condicao,

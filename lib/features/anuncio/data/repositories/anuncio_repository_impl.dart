@@ -28,4 +28,9 @@ class AnuncioRepositoryImpl implements AnuncioRepository {
       );
       await datasource.publicar(model);
   }
+
+  @override
+  Future<void> deletar(int id) async {
+    await datasource.deletar(id);
+}
 }

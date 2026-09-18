@@ -5,6 +5,7 @@ import '../models/anuncio_model.dart';
 abstract class AnuncioDatasource {
   Future<List<AnuncioModel>> listar();
   Future<void> publicar(AnuncioModel anuncio);
+  Future<void> deletar(int id);
 }
 
 class AnuncioDatasourceSqlite implements AnuncioDatasource {
@@ -23,6 +24,12 @@ class AnuncioDatasourceSqlite implements AnuncioDatasource {
     final db = await DatabaseHelper.database;
     await db.insert('anuncios', anuncio.toMap());
   }
+
+  @override
+  Future<void> deletar(int id) async {
+    final db = await DatabaseHelper.database;
+    await db.delete('anuncios', where: 'id = ?', whereArgs: [id]);
+  }
 }
 
 class AnuncioDatasourceSupabase implements AnuncioDatasource {
@@ -35,9 +42,7 @@ class AnuncioDatasourceSupabase implements AnuncioDatasource {
         .select()
         .order('created_at', ascending: false);
 
-    return (resultado as List)
-        .map((row) => AnuncioModel.fromMap(row))
-        .toList();
+    return (resultado as List).map((row) => AnuncioModel.fromMap(row)).toList();
   }
 
   @override
@@ -57,4 +62,9 @@ class AnuncioDatasourceSupabase implements AnuncioDatasource {
       'fotos': anuncio.fotos,
     });
   }
-} 
+
+  @override
+  Future<void> deletar(int id) async {
+    await _supabase.from('anuncios').delete().eq('id', id);
+  }
+}
