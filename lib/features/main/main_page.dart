@@ -7,6 +7,7 @@ import 'package:replaykids/features/anuncio/domain/repositories/anuncio_reposito
 import 'package:replaykids/features/anuncio/presentation/pages/publish_step1_page.dart';
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
+import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -25,7 +26,7 @@ class _MainPageState extends State<MainPage> {
         index: _abaAtual,
         children: const [
           _FeedView(),
-          _PlaceholderView(label: 'Favoritos'),
+          FavoritosPage(),
           _PlaceholderView(label: 'Chat'),
           PerfilPage(),
         ],

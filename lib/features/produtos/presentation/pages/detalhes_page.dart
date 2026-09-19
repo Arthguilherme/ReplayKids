@@ -5,6 +5,7 @@ import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart'
 import 'package:replaykids/core/injector/injector.dart';
 import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:replaykids/features/favoritos/data/datasources/favoritos_datasource.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -17,9 +18,43 @@ class DetalhesPage extends StatefulWidget {
 class _DetalhesPageState extends State<DetalhesPage> {
   int _fotoAtual = 0;
   bool _favoritado = false;
+  bool _carregandoFavorito = false;
 
+  final _favoritosDatasource = injector.get<FavoritosDatasource>();
   final _repository = injector.get<AnuncioRepository>();
   final _usuarioAtual = Supabase.instance.client.auth.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _inicializarFavorito();
+  }
+
+  Future<void> _inicializarFavorito() async {
+    final favoritado =
+        await _favoritosDatasource.ehFavoritado(widget.anuncio.id);
+    setState(() => _favoritado = favoritado);
+  }
+
+  Future<void> _toggleFavorito() async {
+    if (_carregandoFavorito) return;
+    setState(() => _carregandoFavorito = true);
+
+    try {
+      if (_favoritado) {
+        await _favoritosDatasource.desfavoritar(widget.anuncio.id);
+      } else {
+        await _favoritosDatasource.favoritar(widget.anuncio.id);
+      }
+      setState(() => _favoritado = !_favoritado);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao atualizar favorito')),
+      );
+    } finally {
+      setState(() => _carregandoFavorito = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +332,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => setState(() => _favoritado = !_favoritado),
+                    onTap:  _toggleFavorito,
                     child: Container(
                       width: 48,
                       height: 48,
