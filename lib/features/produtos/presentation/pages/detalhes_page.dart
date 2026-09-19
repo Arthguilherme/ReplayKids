@@ -332,7 +332,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap:  _toggleFavorito,
+                    onTap: _toggleFavorito,
                     child: Container(
                       width: 48,
                       height: 48,
