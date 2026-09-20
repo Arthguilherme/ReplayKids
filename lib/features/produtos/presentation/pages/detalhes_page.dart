@@ -302,7 +302,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 border: Border(

@@ -22,15 +22,12 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _abaAtual,
-        children: const [
+      body: [
           _FeedView(),
           FavoritosPage(),
           _PlaceholderView(label: 'Chat'),
           PerfilPage(),
-        ],
-      ),
+      ][_abaAtual],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           border: Border(top: BorderSide(color: AppColors.neutral100)),
