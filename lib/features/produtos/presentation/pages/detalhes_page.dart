@@ -6,6 +6,8 @@ import 'package:replaykids/core/injector/injector.dart';
 import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/favoritos/data/datasources/favoritos_datasource.dart';
+import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
+import 'package:replaykids/features/chat/presentation/pages/chat_page.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -313,7 +315,29 @@ class _DetalhesPageState extends State<DetalhesPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final vendedorId = widget.anuncio.usuarioId;
+                        if (vendedorId == null) return;
+
+                        final chatDatasource = injector.get<ChatDatasource>();
+                        final conversaId = await chatDatasource.buscarOuCriarConversa(
+                          vendedorId: vendedorId,
+                          anuncioId: widget.anuncio.id,
+                        );
+
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChatPage(
+                                conversaId: conversaId,
+                                titulo: widget.anuncio.titulo,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+
                       icon: const Icon(Icons.chat_bubble_outline, size: 18),
                       label: const Text(
                         'Tenho interesse',

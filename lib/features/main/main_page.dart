@@ -8,6 +8,7 @@ import 'package:replaykids/features/anuncio/presentation/pages/publish_step1_pag
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.dart';
+import 'package:replaykids/features/chat/presentation/pages/chat_list_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -25,7 +26,7 @@ class _MainPageState extends State<MainPage> {
       body: [
           _FeedView(),
           FavoritosPage(),
-          _PlaceholderView(label: 'Chat'),
+          ChatListPage(),
           PerfilPage(),
       ][_abaAtual],
       bottomNavigationBar: Container(
