@@ -38,7 +38,7 @@ void setupInjector() {
   injector.addSingleton(PerfilDatasource.new);
   injector.addSingleton(FavoritosDatasource.new);
   
-  injector.addSingleton(ChatDatasource.new);
+  injector.addSingleton<ChatDatasource>(ChatDatasource.new);
 
   injector.commit();
 }

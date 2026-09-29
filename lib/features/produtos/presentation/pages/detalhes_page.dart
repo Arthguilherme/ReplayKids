@@ -8,7 +8,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/favoritos/data/datasources/favoritos_datasource.dart';
 import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
 import 'package:replaykids/features/chat/presentation/pages/chat_page.dart';
-import 'package:replaykids/features/perfil/presentation/pages/perfil_publico_page.dart';
+import 'package:replaykids/features/perfil/produtos/presentation/pages/perfil_publico_page.dart';
+
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -22,6 +23,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
   int _fotoAtual = 0;
   bool _favoritado = false;
   bool _carregandoFavorito = false;
+
+  String _nomeVendedor = 'Vendedor';
 
   final _favoritosDatasource = injector.get<FavoritosDatasource>();
   final _repository = injector.get<AnuncioRepository>();
