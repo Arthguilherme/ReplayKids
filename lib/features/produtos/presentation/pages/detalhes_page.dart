@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/favoritos/data/datasources/favoritos_datasource.dart';
 import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
 import 'package:replaykids/features/chat/presentation/pages/chat_page.dart';
+import 'package:replaykids/features/perfil/presentation/pages/perfil_publico_page.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -30,6 +31,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
   void initState() {
     super.initState();
     _inicializarFavorito();
+    _buscarVendedor();
   }
 
   Future<void> _inicializarFavorito() async {
@@ -267,12 +269,28 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Vendedor',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.neutral800,
+                              GestureDetector(
+                                onTap: () {
+                                  final vendedorId = widget.anuncio.usuarioId;
+                                  if (vendedorId == null) return;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PerfilPublicoPage(
+                                        usuarioId: vendedorId,
+                                        nome: _nomeVendedor,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  _nomeVendedor,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.c700,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ),
                               Row(
@@ -304,7 +322,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
+              padding: EdgeInsets.fromLTRB(
+                  20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 border: Border(
@@ -320,7 +339,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         if (vendedorId == null) return;
 
                         final chatDatasource = injector.get<ChatDatasource>();
-                        final conversaId = await chatDatasource.buscarOuCriarConversa(
+                        final conversaId =
+                            await chatDatasource.buscarOuCriarConversa(
                           vendedorId: vendedorId,
                           anuncioId: widget.anuncio.id,
                         );
@@ -337,7 +357,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           );
                         }
                       },
-
                       icon: const Icon(Icons.chat_bubble_outline, size: 18),
                       label: const Text(
                         'Tenho interesse',
@@ -455,6 +474,26 @@ class _DetalhesPageState extends State<DetalhesPage> {
     if (confirmar == true && mounted) {
       await _repository.deletar(widget.anuncio.id);
       if (mounted) Navigator.maybePop(context);
+    }
+  }
+
+  Future<void> _buscarVendedor() async {
+    final vendedorId = widget.anuncio.usuarioId;
+    if (vendedorId == null) {
+      setState(() => _nomeVendedor = 'Vendedor');
+      return;
+    }
+
+    try {
+      final perfil = await Supabase.instance.client
+          .from('perfis')
+          .select('nome')
+          .eq('id', vendedorId)
+          .single();
+
+      setState(() => _nomeVendedor = perfil['nome'] as String);
+    } catch (e) {
+      setState(() => _nomeVendedor = 'Vendedor');
     }
   }
 }
