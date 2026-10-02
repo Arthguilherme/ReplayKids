@@ -9,6 +9,7 @@ import 'package:replaykids/features/perfil/data/datasources/perfil_datasource.da
 import 'dart:io';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:replaykids/core/widgets/foto_widget.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});

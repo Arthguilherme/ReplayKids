@@ -1,14 +1,15 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
-import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart';
 import 'package:replaykids/core/injector/injector.dart';
+import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart';
 import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/favoritos/data/datasources/favoritos_datasource.dart';
 import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
 import 'package:replaykids/features/chat/presentation/pages/chat_page.dart';
-import 'package:replaykids/features/perfil/presentation/pages/perfil_publico_page.dart';
-import 'package:replaykids/features/perfil/produtos/presentation/pages/perfil_publico_page.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:replaykids/features/produtos/presentation/pages/perfil_publico_page.dart';
+import 'package:replaykids/core/widgets/foto_widget.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -88,11 +89,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                               itemCount: anuncio.fotos.length,
                               onPageChanged: (i) =>
                                   setState(() => _fotoAtual = i),
-                              itemBuilder: (_, i) => Image.file(
-                                File(anuncio.fotos[i]),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
+                              itemBuilder: (_, i) => FotoWidget(src: anuncio.fotos[i]),
                             ),
                       Positioned(
                         top: 0,

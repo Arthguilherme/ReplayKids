@@ -13,8 +13,7 @@ import '../../features/auth/presentation/controllers/signup_controller.dart';
 import '../../features/perfil/data/datasources/perfil_datasource.dart';
 import '../../features/favoritos/data/datasources/favoritos_datasource.dart';
 import '../../features/chat/datasources/chat_datasource.dart';
-
-
+import '../../core/storage/storage_datasource.dart';
 
 final injector = AutoInjector();
 bool _initialized = false;
@@ -40,6 +39,8 @@ void setupInjector() {
   
   injector.addSingleton<ChatDatasource>(ChatDatasource.new);
 
+  injector.addSingleton(StorageDatasource.new);
+  
   injector.commit();
 }
 

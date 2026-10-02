@@ -6,6 +6,7 @@ import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart'
 import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
+import 'package:replaykids/core/widgets/foto_widget.dart';
 
 class PerfilPublicoPage extends StatefulWidget {
   final String usuarioId;

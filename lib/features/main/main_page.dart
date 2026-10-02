@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:replaykids/core/widgets/foto_widget.dart';import 'package:flutter/material.dart';
 import 'package:replaykids/core/injector/injector.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart';
@@ -308,11 +307,7 @@ class _AnuncioCard extends StatelessWidget {
                         child: const Icon(Icons.image_outlined,
                             color: AppColors.c400, size: 36),
                       )
-                    : Image.file(
-                        File(anuncio.fotos.first),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
+                    : FotoWidget(src: anuncio.fotos.first)
               ),
             ),
             Padding(
