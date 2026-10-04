@@ -43,6 +43,7 @@ class PublishController {
   }
 
   Future<void> publicar() async {
+    debugPrint('Iniciando upload de ${fotos.length} fotos...');
     final urlsFotos = <String>[];
     for (final foto in fotos) {
       try {

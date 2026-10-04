@@ -1,15 +1,14 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/core/injector/injector.dart';
+import 'package:replaykids/core/widgets/foto_widget.dart';
 import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart';
 import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
 import 'package:replaykids/features/favoritos/data/datasources/favoritos_datasource.dart';
 import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
 import 'package:replaykids/features/chat/presentation/pages/chat_page.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/produtos/presentation/pages/perfil_publico_page.dart';
-import 'package:replaykids/core/widgets/foto_widget.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -23,11 +22,12 @@ class _DetalhesPageState extends State<DetalhesPage> {
   int _fotoAtual = 0;
   bool _favoritado = false;
   bool _carregandoFavorito = false;
-
+  bool _carregandoChat = false;
   String _nomeVendedor = 'Vendedor';
 
   final _favoritosDatasource = injector.get<FavoritosDatasource>();
   final _repository = injector.get<AnuncioRepository>();
+  final _chatDatasource = injector.get<ChatDatasource>();
   final _usuarioAtual = Supabase.instance.client.auth.currentUser;
 
   @override
@@ -38,15 +38,13 @@ class _DetalhesPageState extends State<DetalhesPage> {
   }
 
   Future<void> _inicializarFavorito() async {
-    final favoritado =
-        await _favoritosDatasource.ehFavoritado(widget.anuncio.id);
+    final favoritado = await _favoritosDatasource.ehFavoritado(widget.anuncio.id);
     setState(() => _favoritado = favoritado);
   }
 
   Future<void> _toggleFavorito() async {
     if (_carregandoFavorito) return;
     setState(() => _carregandoFavorito = true);
-
     try {
       if (_favoritado) {
         await _favoritosDatasource.desfavoritar(widget.anuncio.id);
@@ -63,347 +61,61 @@ class _DetalhesPageState extends State<DetalhesPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final anuncio = widget.anuncio;
+  Future<void> _abrirChat() async {
+    if (_carregandoChat) return;
+    final vendedorId = widget.anuncio.usuarioId;
+    if (vendedorId == null) return;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 320,
-                  child: Stack(
-                    children: [
-                      anuncio.fotos.isEmpty
-                          ? Container(
-                              color: AppColors.c100,
-                              alignment: Alignment.center,
-                              child: const Icon(Icons.image_outlined,
-                                  size: 64, color: AppColors.c300),
-                            )
-                          : PageView.builder(
-                              itemCount: anuncio.fotos.length,
-                              onPageChanged: (i) =>
-                                  setState(() => _fotoAtual = i),
-                              itemBuilder: (_, i) => FotoWidget(src: anuncio.fotos[i]),
-                            ),
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: 100,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black38, Colors.transparent],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 48,
-                        left: 16,
-                        child: _CircleButton(
-                          icon: Icons.arrow_back,
-                          onTap: () => Navigator.maybePop(context),
-                        ),
-                      ),
-                      Positioned(
-                        top: 48,
-                        right: 16,
-                        child: _CircleButton(
-                          icon: Icons.more_vert,
-                          onTap: () => _mostrarOpcoes(),
-                        ),
-                      ),
-                      if (anuncio.fotos.length > 1)
-                        Positioned(
-                          bottom: 12,
-                          left: 0,
-                          right: 0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              anuncio.fotos.length,
-                              (i) => AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 3),
-                                width: _fotoAtual == i ? 16 : 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  color: _fotoAtual == i
-                                      ? Colors.white
-                                      : Colors.white54,
-                                  borderRadius: BorderRadius.circular(99),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              anuncio.titulo,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                                height: 1.2,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: AppColors.c100,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              anuncio.condicao.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.c800,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        anuncio.isVenda ? 'R\$ ${anuncio.preco}' : 'Doação',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.c600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on_outlined,
-                              size: 14, color: AppColors.neutral500),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Litoral do PR',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.neutral500,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Text('•',
-                              style: TextStyle(color: AppColors.neutral400)),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.child_care_outlined,
-                              size: 14, color: AppColors.neutral500),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Tam. ${anuncio.faixaEtaria}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.neutral500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      const Divider(color: AppColors.neutral100),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Descrição',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.neutral800,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        anuncio.descricao,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.neutral600,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Divider(color: AppColors.neutral100),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: const BoxDecoration(
-                              color: AppColors.c200,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: const Icon(Icons.person_outline,
-                                color: AppColors.c700, size: 22),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  final vendedorId = widget.anuncio.usuarioId;
-                                  if (vendedorId == null) return;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => PerfilPublicoPage(
-                                        usuarioId: vendedorId,
-                                        nome: _nomeVendedor,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  _nomeVendedor,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.c700,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                children: const [
-                                  Icon(Icons.star_rounded,
-                                      size: 14, color: Colors.amber),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    '4.9 • Membro desde 2025',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.neutral500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(
-                  20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: AppColors.neutral100),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        final vendedorId = widget.anuncio.usuarioId;
-                        if (vendedorId == null) return;
+    setState(() => _carregandoChat = true);
+    try {
+      // buscarOuCriarConversa já retorna a existente se houver
+      final conversaId = await _chatDatasource.buscarOuCriarConversa(
+        vendedorId: vendedorId,
+        anuncioId: widget.anuncio.id,
+      );
 
-                        final chatDatasource = injector.get<ChatDatasource>();
-                        final conversaId =
-                            await chatDatasource.buscarOuCriarConversa(
-                          vendedorId: vendedorId,
-                          anuncioId: widget.anuncio.id,
-                        );
-
-                        if (mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ChatPage(
-                                conversaId: conversaId,
-                                titulo: widget.anuncio.titulo,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.chat_bubble_outline, size: 18),
-                      label: const Text(
-                        'Tenho interesse',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.c500,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: _toggleFavorito,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.neutral200),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        _favoritado
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        color: _favoritado ? Colors.red : AppColors.neutral400,
-                        size: 22,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatPage(
+              conversaId: conversaId,
+              titulo: widget.anuncio.titulo,
             ),
           ),
-        ],
-      ),
-    );
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao abrir chat')),
+        );
+      }
+    } finally {
+      setState(() => _carregandoChat = false);
+    }
+  }
+
+  Future<void> _buscarVendedor() async {
+    final vendedorId = widget.anuncio.usuarioId;
+    if (vendedorId == null) {
+      setState(() => _nomeVendedor = 'Vendedor');
+      return;
+    }
+    try {
+      final perfil = await Supabase.instance.client
+          .from('perfis')
+          .select('nome')
+          .eq('id', vendedorId)
+          .single();
+      setState(() => _nomeVendedor = perfil['nome'] as String);
+    } catch (e) {
+      setState(() => _nomeVendedor = 'Vendedor');
+    }
   }
 
   void _mostrarOpcoes() {
     final ehDono = widget.anuncio.usuarioId == _usuarioAtual?.id;
-
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -426,10 +138,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
             if (ehDono)
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: const Text(
-                  'Apagar anúncio',
-                  style: TextStyle(color: Colors.red),
-                ),
+                title: const Text('Apagar anúncio',
+                    style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(context);
                   _confirmarDelecao();
@@ -469,31 +179,327 @@ class _DetalhesPageState extends State<DetalhesPage> {
         ],
       ),
     );
-
     if (confirmar == true && mounted) {
       await _repository.deletar(widget.anuncio.id);
       if (mounted) Navigator.maybePop(context);
     }
   }
 
-  Future<void> _buscarVendedor() async {
-    final vendedorId = widget.anuncio.usuarioId;
-    if (vendedorId == null) {
-      setState(() => _nomeVendedor = 'Vendedor');
-      return;
-    }
+  @override
+  Widget build(BuildContext context) {
+    final anuncio = widget.anuncio;
+    final ehDono = anuncio.usuarioId == _usuarioAtual?.id;
 
-    try {
-      final perfil = await Supabase.instance.client
-          .from('perfis')
-          .select('nome')
-          .eq('id', vendedorId)
-          .single();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 320,
+                  child: Stack(
+                    children: [
+                      anuncio.fotos.isEmpty
+                          ? Container(
+                              color: AppColors.c100,
+                              alignment: Alignment.center,
+                              child: const Icon(Icons.image_outlined,
+                                  size: 64, color: AppColors.c300),
+                            )
+                          : PageView.builder(
+                              itemCount: anuncio.fotos.length,
+                              onPageChanged: (i) =>
+                                  setState(() => _fotoAtual = i),
+                              itemBuilder: (_, i) =>
+                                  FotoWidget(src: anuncio.fotos[i]),
+                            ),
+                      Positioned(
+                        top: 0, left: 0, right: 0, height: 100,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black38, Colors.transparent],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 48, left: 16,
+                        child: _CircleButton(
+                          icon: Icons.arrow_back,
+                          onTap: () => Navigator.maybePop(context),
+                        ),
+                      ),
+                      Positioned(
+                        top: 48, right: 16,
+                        child: _CircleButton(
+                          icon: Icons.more_vert,
+                          onTap: _mostrarOpcoes,
+                        ),
+                      ),
+                      if (anuncio.fotos.length > 1)
+                        Positioned(
+                          bottom: 12, left: 0, right: 0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              anuncio.fotos.length,
+                              (i) => AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                width: _fotoAtual == i ? 16 : 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: _fotoAtual == i
+                                      ? Colors.white
+                                      : Colors.white54,
+                                  borderRadius: BorderRadius.circular(99),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              anuncio.titulo,
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.2),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: AppColors.c100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              anuncio.condicao.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.c800,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        anuncio.isVenda ? 'R\$ ${anuncio.preco}' : 'Doação',
+                        style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.c600),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on_outlined,
+                              size: 14, color: AppColors.neutral500),
+                          const SizedBox(width: 4),
+                          const Text('Litoral do PR',
+                              style: TextStyle(
+                                  fontSize: 12, color: AppColors.neutral500)),
+                          const SizedBox(width: 8),
+                          const Text('•',
+                              style: TextStyle(color: AppColors.neutral400)),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.child_care_outlined,
+                              size: 14, color: AppColors.neutral500),
+                          const SizedBox(width: 4),
+                          Text('Tam. ${anuncio.faixaEtaria}',
+                              style: const TextStyle(
+                                  fontSize: 12, color: AppColors.neutral500)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(color: AppColors.neutral100),
+                      const SizedBox(height: 16),
+                      const Text('Descrição',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.neutral800)),
+                      const SizedBox(height: 8),
+                      Text(anuncio.descricao,
+                          style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.neutral600,
+                              height: 1.5)),
+                      const SizedBox(height: 20),
+                      const Divider(color: AppColors.neutral100),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: const BoxDecoration(
+                                color: AppColors.c200, shape: BoxShape.circle),
+                            alignment: Alignment.center,
+                            child: const Icon(Icons.person_outline,
+                                color: AppColors.c700, size: 22),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  final vendedorId = anuncio.usuarioId;
+                                  if (vendedorId == null) return;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PerfilPublicoPage(
+                                        usuarioId: vendedorId,
+                                        nome: _nomeVendedor,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  _nomeVendedor,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.c700,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                children: const [
+                                  Icon(Icons.star_rounded,
+                                      size: 14, color: Colors.amber),
+                                  SizedBox(width: 4),
+                                  Text('4.9 • Membro desde 2025',
+                                      style: TextStyle(
+                                          fontSize: 11,
+                                          color: AppColors.neutral500)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
 
-      setState(() => _nomeVendedor = perfil['nome'] as String);
-    } catch (e) {
-      setState(() => _nomeVendedor = 'Vendedor');
-    }
+          // Botões do fundo
+          Positioned(
+            bottom: 0, left: 0, right: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(
+                  20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(top: BorderSide(color: AppColors.neutral100)),
+              ),
+              child: ehDono
+                  // Dono vê botão de apagar
+                  ? SizedBox(
+                      height: 48,
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _confirmarDelecao,
+                        icon: const Icon(Icons.delete_outline,
+                            color: Colors.red, size: 18),
+                        label: const Text('Apagar anúncio',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600)),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.red),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14)),
+                        ),
+                      ),
+                    )
+                  // Outros veem Tenho interesse + favoritar
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: _carregandoChat ? null : _abrirChat,
+                            icon: _carregandoChat
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2, color: Colors.white),
+                                  )
+                                : const Icon(Icons.chat_bubble_outline,
+                                    size: 18),
+                            label: const Text('Tenho interesse',
+                                style:
+                                    TextStyle(fontWeight: FontWeight.w600)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.c500,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        GestureDetector(
+                          onTap: _toggleFavorito,
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: AppColors.neutral200),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            alignment: Alignment.center,
+                            child: Icon(
+                              _favoritado
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              color: _favoritado
+                                  ? Colors.red
+                                  : AppColors.neutral400,
+                              size: 22,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -514,9 +520,7 @@ class _CircleButton extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-            ),
+                color: Colors.black.withOpacity(0.1), blurRadius: 8),
           ],
         ),
         alignment: Alignment.center,

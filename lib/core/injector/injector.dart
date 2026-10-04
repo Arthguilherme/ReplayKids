@@ -29,6 +29,7 @@ void setupInjector() {
   injector.add(LoginController.new);
 
   injector.addSingleton<AnuncioRepository>(AnuncioRepositoryImpl.new);
+  injector.addSingleton(StorageDatasource.new);
   injector.addSingleton(PublishController.new);
   injector.addSingleton<AnuncioDatasource>(AnuncioDatasourceSupabase.new);
 
@@ -39,7 +40,7 @@ void setupInjector() {
   
   injector.addSingleton<ChatDatasource>(ChatDatasource.new);
 
-  injector.addSingleton(StorageDatasource.new);
+ 
   
   injector.commit();
 }
