@@ -32,5 +32,23 @@ class AnuncioRepositoryImpl implements AnuncioRepository {
   @override
   Future<void> deletar(int id) async {
     await datasource.deletar(id);
-}
+  }
+
+  @override
+  Future<void> atualizar(AnuncioEntity anuncio) async {
+    final model = AnuncioModel(
+      id: anuncio.id,
+      usuarioId: anuncio.usuarioId,
+      titulo: anuncio.titulo,
+      descricao: anuncio.descricao,
+      condicao: anuncio.condicao,
+      categoria: anuncio.categoria,
+      faixaEtaria: anuncio.faixaEtaria,
+      isVenda: anuncio.isVenda,
+      preco: anuncio.preco,
+      fotos: anuncio.fotos,
+    );
+    await datasource.atualizar(model);
+  }
+
 }

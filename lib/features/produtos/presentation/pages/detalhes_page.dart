@@ -9,6 +9,7 @@ import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
 import 'package:replaykids/features/chat/presentation/pages/chat_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/perfil_publico_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:replaykids/features/anuncio/presentation/pages/editar_anuncio_page.dart';
 
 class DetalhesPage extends StatefulWidget {
   final AnuncioEntity anuncio;
@@ -38,7 +39,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
   }
 
   Future<void> _inicializarFavorito() async {
-    final favoritado = await _favoritosDatasource.ehFavoritado(widget.anuncio.id);
+    final favoritado =
+        await _favoritosDatasource.ehFavoritado(widget.anuncio.id);
     setState(() => _favoritado = favoritado);
   }
 
@@ -68,7 +70,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
 
     setState(() => _carregandoChat = true);
     try {
-      // buscarOuCriarConversa já retorna a existente se houver
       final conversaId = await _chatDatasource.buscarOuCriarConversa(
         vendedorId: vendedorId,
         anuncioId: widget.anuncio.id,
@@ -153,6 +154,34 @@ class _DetalhesPageState extends State<DetalhesPage> {
                 onTap: () => Navigator.pop(context),
               ),
             const SizedBox(height: 8),
+            if (ehDono) ...[
+              ListTile(
+                leading: const Icon(Icons.edit_outlined, color: AppColors.c700),
+                title: const Text('Editar anúncio'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final atualizado = await Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          EditarAnuncioPage(anuncio: widget.anuncio),
+                    ),
+                  );
+                  if (atualizado == true && mounted) {
+                    Navigator.maybePop(context, true);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline, color: Colors.red),
+                title: const Text('Apagar anúncio',
+                    style: TextStyle(color: Colors.red)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _confirmarDelecao();
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -216,7 +245,10 @@ class _DetalhesPageState extends State<DetalhesPage> {
                                   FotoWidget(src: anuncio.fotos[i]),
                             ),
                       Positioned(
-                        top: 0, left: 0, right: 0, height: 100,
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 100,
                         child: Container(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
@@ -228,14 +260,16 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         ),
                       ),
                       Positioned(
-                        top: 48, left: 16,
+                        top: 48,
+                        left: 16,
                         child: _CircleButton(
                           icon: Icons.arrow_back,
                           onTap: () => Navigator.maybePop(context),
                         ),
                       ),
                       Positioned(
-                        top: 48, right: 16,
+                        top: 48,
+                        right: 16,
                         child: _CircleButton(
                           icon: Icons.more_vert,
                           onTap: _mostrarOpcoes,
@@ -243,14 +277,17 @@ class _DetalhesPageState extends State<DetalhesPage> {
                       ),
                       if (anuncio.fotos.length > 1)
                         Positioned(
-                          bottom: 12, left: 0, right: 0,
+                          bottom: 12,
+                          left: 0,
+                          right: 0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: List.generate(
                               anuncio.fotos.length,
                               (i) => AnimatedContainer(
                                 duration: const Duration(milliseconds: 200),
-                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 3),
                                 width: _fotoAtual == i ? 16 : 6,
                                 height: 6,
                                 decoration: BoxDecoration(
@@ -414,7 +451,9 @@ class _DetalhesPageState extends State<DetalhesPage> {
 
           // Botões do fundo
           Positioned(
-            bottom: 0, left: 0, right: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
             child: Container(
               padding: EdgeInsets.fromLTRB(
                   20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
@@ -458,8 +497,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                                 : const Icon(Icons.chat_bubble_outline,
                                     size: 18),
                             label: const Text('Tenho interesse',
-                                style:
-                                    TextStyle(fontWeight: FontWeight.w600)),
+                                style: TextStyle(fontWeight: FontWeight.w600)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.c500,
                               foregroundColor: Colors.white,
@@ -477,8 +515,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                             width: 48,
                             height: 48,
                             decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: AppColors.neutral200),
+                              border: Border.all(color: AppColors.neutral200),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             alignment: Alignment.center,
@@ -519,8 +556,7 @@ class _CircleButton extends StatelessWidget {
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.1), blurRadius: 8),
+            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
           ],
         ),
         alignment: Alignment.center,

@@ -6,6 +6,7 @@ abstract class AnuncioDatasource {
   Future<List<AnuncioModel>> listar();
   Future<void> publicar(AnuncioModel anuncio);
   Future<void> deletar(int id);
+  Future<void> atualizar(AnuncioModel anuncio);
 }
 
 class AnuncioDatasourceSqlite implements AnuncioDatasource {
@@ -29,6 +30,17 @@ class AnuncioDatasourceSqlite implements AnuncioDatasource {
   Future<void> deletar(int id) async {
     final db = await DatabaseHelper.database;
     await db.delete('anuncios', where: 'id = ?', whereArgs: [id]);
+  }
+
+  @override
+  Future<void> atualizar(AnuncioModel anuncio) async {
+    final db = await DatabaseHelper.database;
+    await db.update(
+      'anuncios',
+      anuncio.toMap(),
+      where: 'id = ?',
+      whereArgs: [anuncio.id],
+    );
   }
 }
 
@@ -66,5 +78,22 @@ class AnuncioDatasourceSupabase implements AnuncioDatasource {
   @override
   Future<void> deletar(int id) async {
     await _supabase.from('anuncios').delete().eq('id', id);
+  }
+
+  @override
+  Future<void> atualizar(AnuncioModel anuncio) async {
+    await _supabase
+        .from('anuncios')
+        .update({
+          'titulo': anuncio.titulo,
+          'descricao': anuncio.descricao,
+          'condicao': anuncio.condicao,
+          'categoria': anuncio.categoria,
+          'faixa_etaria': anuncio.faixaEtaria,
+          'is_venda': anuncio.isVenda,
+          'preco': anuncio.preco,
+          'fotos': anuncio.fotos,
+        })
+        .eq('id', anuncio.id);
   }
 }
