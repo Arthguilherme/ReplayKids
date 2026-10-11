@@ -1,13 +1,14 @@
-import 'package:replaykids/core/widgets/foto_widget.dart';import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:replaykids/core/injector/injector.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
+import 'package:replaykids/core/widgets/foto_widget.dart';
 import 'package:replaykids/features/anuncio/domain/entities/anuncio_entity.dart';
 import 'package:replaykids/features/anuncio/domain/repositories/anuncio_repository.dart';
 import 'package:replaykids/features/anuncio/presentation/pages/publish_step1_page.dart';
+import 'package:replaykids/features/chat/presentation/pages/chat_list_page.dart';
+import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.dart';
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
-import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.dart';
-import 'package:replaykids/features/chat/presentation/pages/chat_list_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -23,10 +24,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: [
-          _FeedView(),
-          FavoritosPage(),
-          ChatListPage(),
-          PerfilPage(),
+        const _FeedView(),
+        const FavoritosPage(),
+        const ChatListPage(),
+        const PerfilPage(),
       ][_abaAtual],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -95,7 +96,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-// Feed incorporado na MainPage
 class _FeedView extends StatefulWidget {
   const _FeedView();
 
@@ -106,6 +106,8 @@ class _FeedView extends StatefulWidget {
 class _FeedViewState extends State<_FeedView> {
   final _repository = injector.get<AnuncioRepository>();
   String _categoriaSelecionada = 'Todos';
+  String _textoBusca = '';
+  late final _buscaController = TextEditingController();
   List<AnuncioEntity> _anuncios = [];
 
   final _categorias = [
@@ -119,14 +121,35 @@ class _FeedViewState extends State<_FeedView> {
     _carregarAnuncios();
   }
 
+  @override
+  void dispose() {
+    _buscaController.dispose();
+    super.dispose();
+  }
+
   Future<void> _carregarAnuncios() async {
     final anuncios = await _repository.listar();
     setState(() => _anuncios = anuncios);
   }
 
   List<AnuncioEntity> get _anunciosFiltrados {
-    if (_categoriaSelecionada == 'Todos') return _anuncios;
-    return _anuncios.where((a) => a.categoria == _categoriaSelecionada).toList();
+    var lista = _anuncios;
+
+    if (_categoriaSelecionada != 'Todos') {
+      lista = lista
+          .where((a) => a.categoria == _categoriaSelecionada)
+          .toList();
+    }
+
+    if (_textoBusca.isNotEmpty) {
+      lista = lista
+          .where((a) =>
+              a.titulo.toLowerCase().contains(_textoBusca.toLowerCase()) ||
+              a.descricao.toLowerCase().contains(_textoBusca.toLowerCase()))
+          .toList();
+    }
+
+    return lista;
   }
 
   @override
@@ -173,7 +196,48 @@ class _FeedViewState extends State<_FeedView> {
 
           const SizedBox(height: 12),
 
-          // Filtros
+          // Campo de busca
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: TextField(
+              controller: _buscaController,
+              onChanged: (v) => setState(() => _textoBusca = v),
+              decoration: InputDecoration(
+                hintText: 'Buscar anúncios...',
+                hintStyle: const TextStyle(
+                    color: AppColors.neutral400, fontSize: 14),
+                prefixIcon: const Icon(Icons.search_rounded,
+                    color: AppColors.neutral400, size: 20),
+                suffixIcon: _textoBusca.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.close_rounded,
+                            color: AppColors.neutral400, size: 20),
+                        onPressed: () {
+                          _buscaController.clear();
+                          setState(() => _textoBusca = '');
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.neutral200),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide:
+                      const BorderSide(color: AppColors.c400, width: 1.5),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Filtros de categoria
           SizedBox(
             height: 36,
             child: ListView.separated(
@@ -193,7 +257,9 @@ class _FeedViewState extends State<_FeedView> {
                       color: selected ? AppColors.c500 : Colors.white,
                       borderRadius: BorderRadius.circular(99),
                       border: Border.all(
-                        color: selected ? AppColors.c500 : AppColors.neutral200,
+                        color: selected
+                            ? AppColors.c500
+                            : AppColors.neutral200,
                       ),
                     ),
                     child: Text(
@@ -201,7 +267,8 @@ class _FeedViewState extends State<_FeedView> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: selected ? Colors.white : AppColors.neutral600,
+                        color:
+                            selected ? Colors.white : AppColors.neutral600,
                       ),
                     ),
                   ),
@@ -212,7 +279,7 @@ class _FeedViewState extends State<_FeedView> {
 
           const SizedBox(height: 12),
 
-          // Lista
+          // Lista de anúncios
           Expanded(
             child: Builder(
               builder: (context) {
@@ -222,22 +289,32 @@ class _FeedViewState extends State<_FeedView> {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.inbox_outlined,
-                            size: 64, color: AppColors.c300),
-                        SizedBox(height: 16),
+                      children: [
+                        Icon(
+                          _textoBusca.isNotEmpty
+                              ? Icons.search_off_rounded
+                              : Icons.inbox_outlined,
+                          size: 64,
+                          color: AppColors.c300,
+                        ),
+                        const SizedBox(height: 16),
                         Text(
-                          'Nenhum anúncio ainda.',
-                          style: TextStyle(
+                          _textoBusca.isNotEmpty
+                              ? 'Nenhum resultado para "$_textoBusca"'
+                              : 'Nenhum anúncio ainda.',
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: AppColors.neutral500,
                           ),
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 6),
+                        const SizedBox(height: 6),
                         Text(
-                          'Toque em + para publicar!',
-                          style: TextStyle(
+                          _textoBusca.isNotEmpty
+                              ? 'Tente buscar por outro termo'
+                              : 'Toque em + para publicar!',
+                          style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.neutral400,
                           ),
@@ -307,7 +384,7 @@ class _AnuncioCard extends StatelessWidget {
                         child: const Icon(Icons.image_outlined,
                             color: AppColors.c400, size: 36),
                       )
-                    : FotoWidget(src: anuncio.fotos.first)
+                    : FotoWidget(src: anuncio.fotos.first),
               ),
             ),
             Padding(
@@ -370,28 +447,6 @@ class _AnuncioCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderView extends StatelessWidget {
-  final String label;
-  const _PlaceholderView({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.c50,
-      body: Center(
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: AppColors.neutral500,
-          ),
         ),
       ),
     );

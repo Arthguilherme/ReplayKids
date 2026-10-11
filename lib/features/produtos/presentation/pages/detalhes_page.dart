@@ -113,10 +113,16 @@ class _DetalhesPageState extends State<DetalhesPage> {
     } catch (e) {
       setState(() => _nomeVendedor = 'Vendedor');
     }
+    Future<void> _buscarVendedor() async {
+      final vendedorId = widget.anuncio.usuarioId;
+      debugPrint('usuarioId do anúncio: $vendedorId');
+      
+    }
   }
 
   void _mostrarOpcoes() {
     final ehDono = widget.anuncio.usuarioId == _usuarioAtual?.id;
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -136,24 +142,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
               ),
             ),
             const SizedBox(height: 8),
-            if (ehDono)
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: const Text('Apagar anúncio',
-                    style: TextStyle(color: Colors.red)),
-                onTap: () {
-                  Navigator.pop(context);
-                  _confirmarDelecao();
-                },
-              ),
-            if (!ehDono)
-              ListTile(
-                leading: const Icon(Icons.flag_outlined,
-                    color: AppColors.neutral700),
-                title: const Text('Denunciar anúncio'),
-                onTap: () => Navigator.pop(context),
-              ),
-            const SizedBox(height: 8),
+            
             if (ehDono) ...[
               ListTile(
                 leading: const Icon(Icons.edit_outlined, color: AppColors.c700),
@@ -170,15 +159,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                   if (atualizado == true && mounted) {
                     Navigator.maybePop(context, true);
                   }
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: const Text('Apagar anúncio',
-                    style: TextStyle(color: Colors.red)),
-                onTap: () {
-                  Navigator.pop(context);
-                  _confirmarDelecao();
                 },
               ),
             ],

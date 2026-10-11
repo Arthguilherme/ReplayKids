@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/main/main_page.dart';
@@ -9,8 +11,11 @@ class AppRouter {
   static const cadastro = '/cadastro';
   static const feed = '/feed';
   static const publicar = '/publicar'; 
+
   static final GoRouter router = GoRouter(
-    initialLocation: login,
+    initialLocation: Supabase.instance.client.auth.currentSession != null
+        ? feed
+        : login,
     routes: [
       GoRoute(
         path: login,
