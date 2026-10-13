@@ -9,6 +9,7 @@ class AnuncioEntity {
   final bool isVenda;
   final String preco;
   final List<String> fotos;
+  final String? nomeVendedor;
 
 AnuncioEntity({
     required this.id,
@@ -20,6 +21,8 @@ AnuncioEntity({
     required this.faixaEtaria,
     required this.isVenda,
     required this.preco,
+    this.nomeVendedor,
     this.fotos = const [],
+
   });
 }

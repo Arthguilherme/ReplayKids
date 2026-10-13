@@ -139,16 +139,6 @@ class _PerfilPageState extends State<PerfilPage> {
                               style:
                                   TextStyle(color: AppColors.neutral400)),
                         ],
-                        const Icon(Icons.star_rounded,
-                            size: 14, color: Colors.amber),
-                        const SizedBox(width: 2),
-                        const Text(
-                          '4.9',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: AppColors.neutral600,
-                          ),
-                        ),
                       ],
                     ),
                   ],

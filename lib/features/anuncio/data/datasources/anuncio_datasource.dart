@@ -1,6 +1,7 @@
 import 'package:replaykids/core/database/database_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/anuncio_model.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class AnuncioDatasource {
   Future<List<AnuncioModel>> listar();
@@ -54,7 +55,12 @@ class AnuncioDatasourceSupabase implements AnuncioDatasource {
         .select()
         .order('created_at', ascending: false);
 
-    return (resultado as List).map((row) => AnuncioModel.fromMap(row)).toList();
+  debugPrint('Resultado bruto: $resultado');
+  debugPrint('Total retornado: ${(resultado as List).length}');
+
+    return (resultado as List)
+    .map((row) => AnuncioModel.fromMap(row))
+    .toList();
   }
 
   @override

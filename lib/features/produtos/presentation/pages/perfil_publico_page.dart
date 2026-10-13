@@ -41,20 +41,23 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> {
           .from('perfis')
           .select()
           .eq('id', widget.usuarioId)
-          .single();
-
+          .maybeSingle();
+ 
       final todos = await _anuncioRepository.listar();
       final anuncios = todos
           .where((a) => a.usuarioId == widget.usuarioId)
           .toList();
+        debugPrint('Total: ${todos.length}, Vendedor: ${anuncios.length}');
 
-      setState(() {
+        setState(() {
         _perfil = perfil;
         _anuncios = anuncios;
         _carregando = false;
+
       });
     } catch (e) {
-      setState(() => _carregando = false);
+      debugPrint('Erro: $e');
+        setState(() => _carregando = false);
     }
   }
 
@@ -67,7 +70,7 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> {
               child: CircularProgressIndicator(color: AppColors.c500))
           : CustomScrollView(
               slivers: [
-                // Header
+                
                 SliverToBoxAdapter(
                   child: Container(
                     color: AppColors.c100,
@@ -131,16 +134,6 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> {
                               const Text(' • ',
                                   style:
                                       TextStyle(color: AppColors.neutral400)),
-                            const Icon(Icons.star_rounded,
-                                size: 14, color: Colors.amber),
-                            const SizedBox(width: 2),
-                            const Text(
-                              '4.9',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.neutral600,
-                              ),
-                            ),
                           ],
                         ),
                       ],
@@ -230,11 +223,7 @@ class _CardAnuncio extends StatelessWidget {
                         child: const Icon(Icons.image_outlined,
                             color: AppColors.c400, size: 36),
                       )
-                    : Image.file(
-                        File(anuncio.fotos.first),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
+                    : FotoWidget(src: anuncio.fotos.first),
               ),
             ),
             Padding(

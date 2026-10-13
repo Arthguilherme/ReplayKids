@@ -34,6 +34,8 @@ class _DetalhesPageState extends State<DetalhesPage> {
   @override
   void initState() {
     super.initState();
+    debugPrint('Anúncio: ${widget.anuncio.titulo}');
+    debugPrint('usuarioId: ${widget.anuncio.usuarioId}');
     _inicializarFavorito();
     _buscarVendedor();
   }
@@ -162,6 +164,13 @@ class _DetalhesPageState extends State<DetalhesPage> {
                 },
               ),
             ],
+            if (!ehDono)
+              ListTile(
+                leading: const Icon(Icons.flag_outlined,
+                    color: AppColors.neutral700),
+                title: const Text('Denunciar anúncio'),
+                onTap: () => Navigator.pop(context),
+              ),
           ],
         ),
       ),
@@ -406,17 +415,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
-                              ),
-                              Row(
-                                children: const [
-                                  Icon(Icons.star_rounded,
-                                      size: 14, color: Colors.amber),
-                                  SizedBox(width: 4),
-                                  Text('4.9 • Membro desde 2025',
-                                      style: TextStyle(
-                                          fontSize: 11,
-                                          color: AppColors.neutral500)),
-                                ],
                               ),
                             ],
                           ),

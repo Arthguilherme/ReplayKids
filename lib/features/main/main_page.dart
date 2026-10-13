@@ -19,12 +19,13 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _abaAtual = 0;
+  final _feedKey = GlobalKey<_FeedViewState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: [
-        const _FeedView(),
+        _FeedView(key: _feedKey),
         const FavoritosPage(),
         const ChatListPage(),
         const PerfilPage(),
@@ -40,7 +41,9 @@ class _MainPageState extends State<MainPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const PublishStep1Page()),
-              ).then((_) => setState(() {}));
+              ).then((_) {
+                _feedKey.currentState?.recarregar();
+              });
               return;
             }
             final novaAba = i < 2 ? i : i - 1;
@@ -97,7 +100,7 @@ class _MainPageState extends State<MainPage> {
 }
 
 class _FeedView extends StatefulWidget {
-  const _FeedView();
+  const _FeedView({super.key});
 
   @override
   State<_FeedView> createState() => _FeedViewState();
@@ -111,8 +114,15 @@ class _FeedViewState extends State<_FeedView> {
   List<AnuncioEntity> _anuncios = [];
 
   final _categorias = [
-    'Todos', 'Brinquedos', 'Roupas', 'Carrinhos',
-    'Móveis', 'Livros', 'Calçados', 'Acessórios', 'Outros',
+    'Todos',
+    'Brinquedos',
+    'Roupas',
+    'Carrinhos',
+    'Móveis',
+    'Livros',
+    'Calçados',
+    'Acessórios',
+    'Outros',
   ];
 
   @override
@@ -132,13 +142,13 @@ class _FeedViewState extends State<_FeedView> {
     setState(() => _anuncios = anuncios);
   }
 
+  Future<void> recarregar() => _carregarAnuncios();
+
   List<AnuncioEntity> get _anunciosFiltrados {
     var lista = _anuncios;
 
     if (_categoriaSelecionada != 'Todos') {
-      lista = lista
-          .where((a) => a.categoria == _categoriaSelecionada)
-          .toList();
+      lista = lista.where((a) => a.categoria == _categoriaSelecionada).toList();
     }
 
     if (_textoBusca.isNotEmpty) {
@@ -204,8 +214,8 @@ class _FeedViewState extends State<_FeedView> {
               onChanged: (v) => setState(() => _textoBusca = v),
               decoration: InputDecoration(
                 hintText: 'Buscar anúncios...',
-                hintStyle: const TextStyle(
-                    color: AppColors.neutral400, fontSize: 14),
+                hintStyle:
+                    const TextStyle(color: AppColors.neutral400, fontSize: 14),
                 prefixIcon: const Icon(Icons.search_rounded,
                     color: AppColors.neutral400, size: 20),
                 suffixIcon: _textoBusca.isNotEmpty
@@ -251,15 +261,13 @@ class _FeedViewState extends State<_FeedView> {
                 return GestureDetector(
                   onTap: () => setState(() => _categoriaSelecionada = cat),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       color: selected ? AppColors.c500 : Colors.white,
                       borderRadius: BorderRadius.circular(99),
                       border: Border.all(
-                        color: selected
-                            ? AppColors.c500
-                            : AppColors.neutral200,
+                        color: selected ? AppColors.c500 : AppColors.neutral200,
                       ),
                     ),
                     child: Text(
@@ -267,8 +275,7 @@ class _FeedViewState extends State<_FeedView> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color:
-                            selected ? Colors.white : AppColors.neutral600,
+                        color: selected ? Colors.white : AppColors.neutral600,
                       ),
                     ),
                   ),
@@ -443,6 +450,19 @@ class _AnuncioCard extends StatelessWidget {
                       color: AppColors.c700,
                     ),
                   ),
+                  if (anuncio.nomeVendedor != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        anuncio.nomeVendedor!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: AppColors.neutral500,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
