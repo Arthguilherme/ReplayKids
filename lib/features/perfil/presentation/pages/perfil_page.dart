@@ -9,6 +9,8 @@ import 'package:replaykids/features/perfil/data/datasources/perfil_datasource.da
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/core/widgets/foto_widget.dart';
+import 'package:replaykids/features/perfil/presentation/pages/editar_perfil_page.dart';
+
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
@@ -105,13 +107,14 @@ class _PerfilPageState extends State<PerfilPage> {
                         color: AppColors.c200,
                         shape: BoxShape.circle,
                       ),
-                      alignment: Alignment.center,
-                      child: const Icon(
-                        Icons.person_rounded,
-                        size: 48,
-                        color: AppColors.c600,
+                      clipBehavior: Clip.antiAlias,
+                      child: _perfil?['foto_url'] != null
+                        ? FotoWidget(src: _perfil!['foto_url'] as String)
+                        : const Icon(Icons.person_rounded,
+                            size: 48, color: AppColors.c600),
                       ),
                     ),
+                    
                     const SizedBox(height: 12),
 
                     Text(
@@ -202,8 +205,18 @@ class _PerfilPageState extends State<PerfilPage> {
                     _OpcaoItem(
                       icon: Icons.settings_outlined,
                       label: 'Configurações',
-                      onTap: () {},
+                      onTap: () async {
+                        if (_perfil == null) return;
+                        final atualizado = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditarPerfilPage(perfil: _perfil!),
+                          ),
+                        );
+                        if (atualizado == true) _carregar();
+                      },
                     ),
+
                     const SizedBox(height: 8),
                     _OpcaoItem(
                       icon: Icons.help_outline_rounded,

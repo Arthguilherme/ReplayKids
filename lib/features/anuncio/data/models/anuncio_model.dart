@@ -5,6 +5,7 @@ class AnuncioModel extends AnuncioEntity {
     required super.id,
     super.usuarioId,
     super.nomeVendedor,
+    super.cidadeVendedor,
     required super.titulo,
     required super.descricao,
     required super.condicao,
@@ -19,17 +20,22 @@ class AnuncioModel extends AnuncioEntity {
 factory AnuncioModel.fromMap(Map<String, dynamic> map) {
   
   String? nomeVendedor;
+  String? cidadeVendedor;
   final perfis = map['perfis'];
   if (perfis is Map) {
     nomeVendedor = perfis['nome'] as String?;
+    cidadeVendedor = perfis['cidade'] as String?;
   } else if (perfis is List && perfis.isNotEmpty) {
       nomeVendedor = perfis.first['nome'] as String?;
+      cidadeVendedor = perfis.first['cidade'] as String?;
   }
  
  
   return AnuncioModel(
     id: map['id'] as int,
     usuarioId: map['usuario_id'] as String?,
+    nomeVendedor: nomeVendedor,      
+    cidadeVendedor: cidadeVendedor,
     titulo: map['titulo'] as String,
     descricao: map['descricao'] as String,
     condicao: map['condicao'] as String,
@@ -38,7 +44,6 @@ factory AnuncioModel.fromMap(Map<String, dynamic> map) {
     isVenda: map['is_venda'] as bool,
     preco: map['preco'] as String,
     fotos: List<String>.from(map['fotos'] ?? []),
-    //nomeVendedor: map['perfis'] != null ? map['perfis']['nome'] as String? : null,
     
   );
 }
@@ -53,7 +58,6 @@ factory AnuncioModel.fromMap(Map<String, dynamic> map) {
       'is_venda': isVenda ? 1 : 0,
       'preco': preco,
       'fotos': fotos,
-      //'fotos': jsonEncode(fotos),
     };
   }
 }

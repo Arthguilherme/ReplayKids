@@ -1,4 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PerfilDatasource {
   final _supabase = Supabase.instance.client;
@@ -24,5 +26,44 @@ class PerfilDatasource {
 
   Future<void> sair() async {
     await _supabase.auth.signOut();
+  }
+
+Future<void> atualizarPerfil({
+  required String nome,
+  required String telefone,
+  required String cidade,
+}) async {
+  final usuarioId = _supabase.auth.currentUser?.id;
+  if (usuarioId == null) throw Exception('Usuário não autenticado');
+
+  await _supabase.from('perfis').update({
+    'nome': nome,
+    'telefone': telefone,
+    'cidade': cidade,
+  }).eq('id', usuarioId);
+}
+
+Future<String> uploadFotoPerfil(String caminhoLocal) async {
+  final usuarioId = _supabase.auth.currentUser?.id;
+  if (usuarioId == null) throw Exception('Usuário não autenticado');
+
+  final arquivo = File(caminhoLocal);
+  final extensao = caminhoLocal.split('.').last;
+  final caminhoStorage = '$usuarioId/avatar.$extensao';
+
+  await _supabase.storage
+      .from('fotos-perfil')
+      .upload(caminhoStorage, arquivo,
+          fileOptions: const FileOptions(upsert: true));
+
+  final url = _supabase.storage
+      .from('fotos-perfil')
+      .getPublicUrl(caminhoStorage);
+
+  await _supabase.from('perfis').update({
+    'foto_url': url,
+  }).eq('id', usuarioId);
+
+  return url;
   }
 }

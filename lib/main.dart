@@ -3,9 +3,14 @@ import 'core/injector/injector.dart';
 import 'core/routes/app_router.dart';
 import 'core/theme/app_colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   await Supabase.initialize(
     url: 'https://obptbvkmfgohansfvcap.supabase.co',

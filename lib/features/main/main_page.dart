@@ -113,6 +113,7 @@ class _FeedViewState extends State<_FeedView> {
   late final _buscaController = TextEditingController();
   List<AnuncioEntity> _anuncios = [];
 
+
   final _categorias = [
     'Todos',
     'Brinquedos',
@@ -123,6 +124,19 @@ class _FeedViewState extends State<_FeedView> {
     'Calçados',
     'Acessórios',
     'Outros',
+  ];
+
+  String? _municipioSelecionado;
+
+  final _municipios = [
+    'Todos',
+    'Paranaguá, PR',
+    'Matinhos, PR',
+    'Pontal do Paraná, PR',
+    'Guaratuba, PR',
+    'Antonina, PR',
+    'Morretes, PR',
+    'Guaraqueçaba, PR',
   ];
 
   @override
@@ -148,10 +162,22 @@ class _FeedViewState extends State<_FeedView> {
     var lista = _anuncios;
 
     if (_categoriaSelecionada != 'Todos') {
-      lista = lista.where((a) => a.categoria == _categoriaSelecionada).toList();
+      lista = lista
+        .where((a) => a.categoria == _categoriaSelecionada)
+        .toList();
     }
 
+    if (_municipioSelecionado != null && _municipioSelecionado != 'Todos') {
+      lista = lista
+        .where((a) => a.cidadeVendedor == _municipioSelecionado)
+        .toList();
+  }
+
     if (_textoBusca.isNotEmpty) {
+
+ debugPrint('Cidade do primeiro anúncio: ${_anuncios.first.cidadeVendedor}');
+    debugPrint('Município selecionado: $_municipioSelecionado');
+
       lista = lista
           .where((a) =>
               a.titulo.toLowerCase().contains(_textoBusca.toLowerCase()) ||
@@ -167,7 +193,6 @@ class _FeedViewState extends State<_FeedView> {
     return SafeArea(
       child: Column(
         children: [
-          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             child: Row(
@@ -206,7 +231,6 @@ class _FeedViewState extends State<_FeedView> {
 
           const SizedBox(height: 12),
 
-          // Campo de busca
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: TextField(
@@ -247,7 +271,41 @@ class _FeedViewState extends State<_FeedView> {
 
           const SizedBox(height: 12),
 
-          // Filtros de categoria
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: DropdownButtonFormField<String>(
+              value: _municipioSelecionado ?? 'Todos',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.location_on_outlined,
+                    color: AppColors.neutral400, size: 20),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.neutral200),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide:
+                      const BorderSide(color: AppColors.c400, width: 1.5),
+                ),
+              ),
+              items: _municipios
+                  .map((m) => DropdownMenuItem(
+                        value: m,
+                        child: Text(m,
+                            style: const TextStyle(
+                                fontSize: 13, color: AppColors.neutral700)),
+                      ))
+                  .toList(),
+              onChanged: (v) => setState(() => _municipioSelecionado = v),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
           SizedBox(
             height: 36,
             child: ListView.separated(
@@ -286,7 +344,6 @@ class _FeedViewState extends State<_FeedView> {
 
           const SizedBox(height: 12),
 
-          // Lista de anúncios
           Expanded(
             child: Builder(
               builder: (context) {
