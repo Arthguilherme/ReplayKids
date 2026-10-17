@@ -670,7 +670,7 @@ packages:
     source: hosted
     version: "0.1.2"
   supabase_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: supabase_flutter
       sha256: "26eb3d3b71bcc5651551e64d6b131ba929ea261998570bbcc90356b1b42fd532"

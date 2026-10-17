@@ -146,7 +146,9 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         );
       }
     } finally {
-      setState(() => _salvando = false);
+      if (mounted){
+        setState(() => _salvando = false);
+      }
     }
   }
 
@@ -210,40 +212,27 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                         shape: BoxShape.circle,
                       ),
                       clipBehavior: Clip.antiAlias,
-                      child: _perfil?['foto_url'] != null
-                          ? FotoWidget(src: _perfil!['foto_url'] as String)
-                          : const Icon(Icons.person_rounded,
-                              size: 48, color: AppColors.c600),
-                      ),
+                      child: _novaFoto != null
+                          ? Image.file(
+                              File(_novaFoto!.path),
+                              fit: BoxFit.cover,
+                            )
+                          : _fotoAtualUrl != null && _fotoAtualUrl!.isNotEmpty
+                              ? FotoWidget(src: _fotoAtualUrl!)
+                              : const Icon(
+                                  Icons.person_rounded,
+                                  size: 48,
+                                  color: AppColors.c600,
+                                ),
+                        ),
                           
                     
-                    Positioned(
-                      bottom: 0, right: 0,
-                      child: Container(
-                        width: 28, height: 28,
-                        decoration: const BoxDecoration(
-                          color: AppColors.c500,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.camera_alt,
-                            size: 16, color: Colors.white),
-                      ),
-                    ),
+                    
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            const Center(
-              child: Text(
-                'Toque para alterar a foto',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.neutral500,
-                ),
-              ),
-            ),
+            
             const SizedBox(height: 28),
 
             LabeledField(

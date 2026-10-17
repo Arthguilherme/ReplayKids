@@ -109,10 +109,12 @@ class _PerfilPageState extends State<PerfilPage> {
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: _perfil?['foto_url'] != null
-                        ? FotoWidget(src: _perfil!['foto_url'] as String)
-                        : const Icon(Icons.person_rounded,
-                            size: 48, color: AppColors.c600),
-                      ),
+                          ? FotoWidget(src: _perfil!['foto_url'] as String)
+                          : const Icon(
+                              Icons.person_rounded,
+                              size: 48,
+                              color: AppColors.c600,
+                            ),
                     ),
                     
                     const SizedBox(height: 12),
@@ -127,22 +129,22 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     const SizedBox(height: 4),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _perfil?['cidade'] ?? '',
+                    Builder(
+                      builder: (_) {
+                        final cidade = (_perfil?['cidade'] ?? '').toString().trim();
+
+                        if (cidade.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Text(
+                          cidade,
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.neutral600,
                           ),
-                        ),
-                        if (_perfil?['cidade'] != null) ...[
-                          const Text(' • ',
-                              style:
-                                  TextStyle(color: AppColors.neutral400)),
-                        ],
-                      ],
+                        );
+                      },
                     ),
                   ],
                 ),
