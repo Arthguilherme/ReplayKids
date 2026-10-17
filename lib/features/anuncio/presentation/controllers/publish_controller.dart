@@ -21,7 +21,7 @@ class PublishController {
   String categoria = 'Brinquedos';
   String faixaEtaria = '1-2 anos';
   bool isVenda = true;
-  String preco = '100,00';
+  String preco = '000,00';
 
   Future<void> adicionarFoto(ImageSource source) async {
     if (fotos.length >= 4) return;
@@ -79,6 +79,6 @@ class PublishController {
     categoria = 'Brinquedos';
     faixaEtaria = '1-2 anos';
     isVenda = true;
-    preco = '100,00';
+    preco = '000,00';
   }
 }
