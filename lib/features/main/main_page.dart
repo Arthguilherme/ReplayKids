@@ -175,9 +175,6 @@ class _FeedViewState extends State<_FeedView> {
 
     if (_textoBusca.isNotEmpty) {
 
- debugPrint('Cidade do primeiro anúncio: ${_anuncios.first.cidadeVendedor}');
-    debugPrint('Município selecionado: $_municipioSelecionado');
-
       lista = lista
           .where((a) =>
               a.titulo.toLowerCase().contains(_textoBusca.toLowerCase()) ||
@@ -509,17 +506,41 @@ class _AnuncioCard extends StatelessWidget {
                   ),
                   if (anuncio.nomeVendedor != null)
                     Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        anuncio.nomeVendedor!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppColors.neutral500,
+                      child:Row(
+                      children: [
+                        if (anuncio.tipoVendedor == 'bazar')
+                          Container(
+                            margin: const EdgeInsets.only(right: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.c500,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                            child: const Text(
+                              'BAZAR',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        Expanded(
+                          child: Text(
+                            anuncio.nomeVendedor!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: AppColors.neutral500,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
+                  ),
                 ],
               ),
             ),

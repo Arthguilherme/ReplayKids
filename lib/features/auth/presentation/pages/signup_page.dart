@@ -19,8 +19,10 @@ class _SignupPageState extends State<SignupPage> {
   final _senhaController = TextEditingController();
   final _telefoneController = TextEditingController();
   final _controller = injector.get<SignupController>();
+  final _nomeEstabelecimentoController = TextEditingController();
 
   String _cidadeSelecionada = 'Matinhos, PR';
+  String _tipoConta = 'pessoa_fisica';
   bool _aceitouTermos = false;
 
   static const _cidades = [
@@ -39,6 +41,7 @@ class _SignupPageState extends State<SignupPage> {
     _emailController.dispose();
     _senhaController.dispose();
     _telefoneController.dispose();
+    _nomeEstabelecimentoController.dispose();
     super.dispose();
   }
 
@@ -56,6 +59,10 @@ class _SignupPageState extends State<SignupPage> {
       senha: _senhaController.text,
       telefone: _telefoneController.text.trim(),
       cidade: _cidadeSelecionada,
+      tipo: _tipoConta,
+      nomeEstabelecimento: _tipoConta == 'bazar'
+          ? _nomeEstabelecimentoController.text.trim()
+          : null,
     );
 
     if (!mounted) return;
@@ -69,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
       );
       context.go(AppRouter.login);
     } else {
-      setState(() {}); 
+      setState(() {});
     }
   }
 
@@ -85,7 +92,6 @@ class _SignupPageState extends State<SignupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               InkWell(
                 onTap: () => context.go(AppRouter.login),
                 borderRadius: BorderRadius.circular(20),
@@ -104,14 +110,12 @@ class _SignupPageState extends State<SignupPage> {
 
               const Text(
                 'Criar conta',
-                style:
-                    TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 4),
               const Text(
                 'Leva menos de um minuto.',
-                style:
-                    TextStyle(color: AppColors.neutral600, fontSize: 13),
+                style: TextStyle(color: AppColors.neutral600, fontSize: 13),
               ),
               const SizedBox(height: 22),
 
@@ -203,6 +207,114 @@ class _SignupPageState extends State<SignupPage> {
               ),
               const SizedBox(height: 14),
 
+              const SizedBox(height: 10),
+
+              const Padding(
+                padding: EdgeInsets.only(left: 4, bottom: 6),
+                child: Text(
+                  'Tipo de conta',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.neutral700,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        _tipoConta = 'pessoa_fisica';
+                        _nomeEstabelecimentoController.clear();
+                      }),
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: _tipoConta == 'pessoa_fisica'
+                              ? AppColors.c500
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: _tipoConta == 'pessoa_fisica'
+                                ? AppColors.c500
+                                : AppColors.neutral200,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.person_outline,
+                                color: _tipoConta == 'pessoa_fisica'
+                                    ? Colors.white
+                                    : AppColors.c700),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Pessoa física',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: _tipoConta == 'pessoa_fisica'
+                                    ? Colors.white
+                                    : AppColors.neutral700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _tipoConta = 'bazar'),
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: _tipoConta == 'bazar'
+                              ? AppColors.c500
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: _tipoConta == 'bazar'
+                                ? AppColors.c500
+                                : AppColors.neutral200,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.store_outlined,
+                                color: _tipoConta == 'bazar'
+                                    ? Colors.white
+                                    : AppColors.c700),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Bazar',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: _tipoConta == 'bazar'
+                                    ? Colors.white
+                                    : AppColors.neutral700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              if (_tipoConta == 'bazar') ...[
+                const SizedBox(height: 10),
+                LabeledField(
+                  label: 'Nome do estabelecimento',
+                  hint: 'Ex: Bazar da Maria',
+                  icon: Icons.storefront_outlined,
+                  controller: _nomeEstabelecimentoController,
+                ),
+              ],
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -214,9 +326,7 @@ class _SignupPageState extends State<SignupPage> {
                       height: 20,
                       margin: const EdgeInsets.only(top: 2),
                       decoration: BoxDecoration(
-                        color: _aceitouTermos
-                            ? AppColors.c500
-                            : Colors.white,
+                        color: _aceitouTermos ? AppColors.c500 : Colors.white,
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: _aceitouTermos

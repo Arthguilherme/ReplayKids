@@ -122,6 +122,8 @@ class AuthDatasourceSupabase implements AuthDatasource {
           'nome': usuario.nome,
           'telefone': usuario.telefone,
           'cidade': usuario.cidade,
+          'tipo': usuario.tipo,
+          'nome_estabelecimento': usuario.nomeEstabelecimento,
         },
       );
 

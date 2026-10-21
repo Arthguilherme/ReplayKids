@@ -117,6 +117,45 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> {
                             color: AppColors.c900,
                           ),
                         ),
+
+                        if (_perfil?['tipo'] == 'bazar') ...[
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.c500,
+                              borderRadius: BorderRadius.circular(99),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.store_outlined, size: 12, color: Colors.white),
+                                SizedBox(width: 4),
+                                Text(
+                                  'BAZAR',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (_perfil?['nome_estabelecimento'] != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                _perfil!['nome_estabelecimento'] as String,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.neutral600,
+                                ),
+                              ),
+                            ),
+                        ],
+
                         const SizedBox(height: 4),
 
                         Row(

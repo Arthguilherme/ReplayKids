@@ -11,6 +11,8 @@ class AnuncioEntity {
   final List<String> fotos;
   final String? nomeVendedor;
   final String? cidadeVendedor;
+  final String? tipoVendedor;
+
 
 AnuncioEntity({
     required this.id,
@@ -25,6 +27,6 @@ AnuncioEntity({
     this.nomeVendedor,
     this.cidadeVendedor,
     this.fotos = const [],
-
+    this.tipoVendedor,
   });
 }

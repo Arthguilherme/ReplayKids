@@ -6,6 +6,7 @@ class AnuncioModel extends AnuncioEntity {
     super.usuarioId,
     super.nomeVendedor,
     super.cidadeVendedor,
+    super.tipoVendedor,
     required super.titulo,
     required super.descricao,
     required super.condicao,
@@ -14,6 +15,7 @@ class AnuncioModel extends AnuncioEntity {
     required super.isVenda,
     required super.preco,
     super.fotos = const [],
+
   });
 
  
@@ -25,9 +27,11 @@ factory AnuncioModel.fromMap(Map<String, dynamic> map) {
   if (perfis is Map) {
     nomeVendedor = perfis['nome'] as String?;
     cidadeVendedor = perfis['cidade'] as String?;
+    tipoVendedor = perfis['tipo'] as String?;
   } else if (perfis is List && perfis.isNotEmpty) {
       nomeVendedor = perfis.first['nome'] as String?;
       cidadeVendedor = perfis.first['cidade'] as String?;
+      tipoVendedor = perfis.first['tipo'] as String?;
   }
  
  

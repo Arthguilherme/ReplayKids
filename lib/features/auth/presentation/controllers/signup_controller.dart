@@ -18,6 +18,8 @@ class SignupController {
     required String senha,
     required String telefone,
     required String cidade,
+    required String tipo,
+    String? nomeEstabelecimento,
   }) async {
     status = SignupStatus.carregando;
     mensagemErro = null;
@@ -30,11 +32,12 @@ class SignupController {
           senha: senha,
           telefone: telefone,
           cidade: cidade,
+          tipo: tipo,
+          nomeEstabelecimento: nomeEstabelecimento,
         ),
       );
       status = SignupStatus.sucesso;
     } catch (e) {
-      debugPrint('Erro no cadastro: $e');
       mensagemErro = e.toString().replaceFirst('Exception: ', '');
       status = SignupStatus.erro;
     }

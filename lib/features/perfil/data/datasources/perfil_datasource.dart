@@ -11,7 +11,7 @@ class PerfilDatasource {
 
     final perfil = await _supabase
         .from('perfis')
-        .select()
+        .select('*, perfis(nome, cidade, tipo)')
         .eq('id', usuario.id)
         .single();
 
@@ -21,6 +21,9 @@ class PerfilDatasource {
       'nome': perfil['nome'],
       'cidade': perfil['cidade'],
       'telefone': perfil['telefone'],
+      'foto_url': perfil['foto_url'],
+      'tipo': perfil['tipo'],
+      'nome_estabelecimento': perfil['nome_estabelecimento'],
     };
   }
 

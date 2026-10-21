@@ -5,6 +5,8 @@ class UsuarioEntity {
   final String senha;
   final String? telefone;
   final String? cidade;
+  final String tipo;
+  final String? nomeEstabelecimento;
 
   const UsuarioEntity({
     this.id,
@@ -13,5 +15,7 @@ class UsuarioEntity {
     required this.senha,
     this.telefone,
     this.cidade,
+    this.tipo = 'pessoa_fisica',
+    this.nomeEstabelecimento,
   });
 }
