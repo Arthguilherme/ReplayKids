@@ -52,7 +52,7 @@ class AnuncioDatasourceSupabase implements AnuncioDatasource {
   Future<List<AnuncioModel>> listar() async {
     final resultado = await _supabase
         .from('anuncios')
-        .select('*, perfis(nome, cidade)')
+        .select('*, perfis(nome, cidade, tipo)')
         .order('created_at', ascending: false);
 
   debugPrint('Resultado bruto: $resultado');

@@ -37,6 +37,9 @@ class _PerfilPageState extends State<PerfilPage> {
     setState(() => _carregando = true);
     try {
       final perfil = await _perfilDatasource.buscarPerfil();
+     
+     debugPrint('TIPO DO PERFIL: "${perfil['tipo']}"');
+     
       final todos = await _anuncioRepository.listar();
       final usuarioId = Supabase.instance.client.auth.currentUser?.id;
       final meus = todos.where((a) => a.usuarioId == usuarioId).toList();

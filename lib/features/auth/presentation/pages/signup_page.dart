@@ -121,7 +121,7 @@ class _SignupPageState extends State<SignupPage> {
 
               LabeledField(
                 label: 'Nome completo',
-                hint: 'Ana Oliveira',
+                hint: 'Digite seu nome completo',
                 icon: Icons.person_outline,
                 controller: _nomeController,
               ),
@@ -129,7 +129,7 @@ class _SignupPageState extends State<SignupPage> {
 
               LabeledField(
                 label: 'E-mail',
-                hint: 'ana@email.com',
+                hint: 'seuemail@email.com',
                 icon: Icons.mail_outline,
                 controller: _emailController,
                 keyboard: TextInputType.emailAddress,
@@ -309,7 +309,7 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 10),
                 LabeledField(
                   label: 'Nome do estabelecimento',
-                  hint: 'Ex: Bazar da Maria',
+                  hint: 'Ex: Brechó do Fulano',
                   icon: Icons.storefront_outlined,
                   controller: _nomeEstabelecimentoController,
                 ),

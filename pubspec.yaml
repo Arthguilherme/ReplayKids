@@ -26,6 +26,8 @@ dependencies:
 
   supabase_flutter: ^2.5.0
 
+  emoji_picker_flutter: ^2.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

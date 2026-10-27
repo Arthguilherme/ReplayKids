@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:io';
 
 class ChatDatasource {
   final _supabase = Supabase.instance.client;
@@ -72,9 +73,38 @@ class ChatDatasource {
       'conversa_id': conversaId,
       'remetente_id': remetenteId,
       'texto': texto,
+      'tipo': 'texto',
     });
   }
 
+  Future<void> enviarImagem({
+    required int conversaId,
+    required String caminhoLocal,
+  }) async {
+    final remetenteId = _supabase.auth.currentUser?.id;
+    if (remetenteId == null) throw Exception('Usuário não autenticado');
+
+    final arquivo = File(caminhoLocal);
+    final extensao = caminhoLocal.split('.').last;
+    final nomeArquivo =
+        '$remetenteId/${DateTime.now().millisecondsSinceEpoch}.$extensao';
+
+    await _supabase.storage
+        .from('chat-anexos')
+        .upload(nomeArquivo, arquivo);
+
+    final url = _supabase.storage
+        .from('chat-anexos')
+        .getPublicUrl(nomeArquivo);
+
+    await _supabase.from('mensagens').insert({
+      'conversa_id': conversaId,
+      'remetente_id': remetenteId,
+      'texto': '',
+      'tipo': 'imagem',
+      'anexo_url': url,
+    });
+  }
   RealtimeChannel escutarMensagens({
     required int conversaId,
     required void Function(Map<String, dynamic>) onNovaMensagem,

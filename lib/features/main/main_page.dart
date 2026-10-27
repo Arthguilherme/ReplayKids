@@ -417,6 +417,7 @@ class _AnuncioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('tipoVendedor: ${anuncio.tipoVendedor}');
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -506,13 +507,15 @@ class _AnuncioCard extends StatelessWidget {
                   ),
                   if (anuncio.nomeVendedor != null)
                     Padding(
+                      padding: const EdgeInsets.only(top: 4),
                       child:Row(
                       children: [
                         if (anuncio.tipoVendedor == 'bazar')
                           Container(
                             margin: const EdgeInsets.only(right: 4),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                                horizontal: 6, 
+                                vertical: 2),
                             decoration: BoxDecoration(
                               color: AppColors.c500,
                               borderRadius: BorderRadius.circular(99),

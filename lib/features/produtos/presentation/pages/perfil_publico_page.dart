@@ -43,6 +43,8 @@ class _PerfilPublicoPageState extends State<PerfilPublicoPage> {
           .eq('id', widget.usuarioId)
           .maybeSingle();
  
+debugPrint('TIPO DO PERFIL PÚBLICO: "${perfil?['tipo']}"');
+
       final todos = await _anuncioRepository.listar();
       final anuncios = todos
           .where((a) => a.usuarioId == widget.usuarioId)

@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class PerfilDatasource {
   final _supabase = Supabase.instance.client;
@@ -11,7 +12,7 @@ class PerfilDatasource {
 
     final perfil = await _supabase
         .from('perfis')
-        .select('*, perfis(nome, cidade, tipo)')
+        .select()
         .eq('id', usuario.id)
         .single();
 
@@ -25,6 +26,7 @@ class PerfilDatasource {
       'tipo': perfil['tipo'],
       'nome_estabelecimento': perfil['nome_estabelecimento'],
     };
+    debugPrint('Perfil completo: $perfil');
   }
 
   Future<void> sair() async {

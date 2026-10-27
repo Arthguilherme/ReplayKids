@@ -7,6 +7,7 @@ class AnuncioModel extends AnuncioEntity {
     super.nomeVendedor,
     super.cidadeVendedor,
     super.tipoVendedor,
+    super.fotos = const [],
     required super.titulo,
     required super.descricao,
     required super.condicao,
@@ -14,16 +15,17 @@ class AnuncioModel extends AnuncioEntity {
     required super.faixaEtaria,
     required super.isVenda,
     required super.preco,
-    super.fotos = const [],
 
   });
 
- 
 factory AnuncioModel.fromMap(Map<String, dynamic> map) {
   
   String? nomeVendedor;
   String? cidadeVendedor;
+  String? tipoVendedor;
+
   final perfis = map['perfis'];
+
   if (perfis is Map) {
     nomeVendedor = perfis['nome'] as String?;
     cidadeVendedor = perfis['cidade'] as String?;
@@ -40,6 +42,7 @@ factory AnuncioModel.fromMap(Map<String, dynamic> map) {
     usuarioId: map['usuario_id'] as String?,
     nomeVendedor: nomeVendedor,      
     cidadeVendedor: cidadeVendedor,
+    tipoVendedor: tipoVendedor,
     titulo: map['titulo'] as String,
     descricao: map['descricao'] as String,
     condicao: map['condicao'] as String,
