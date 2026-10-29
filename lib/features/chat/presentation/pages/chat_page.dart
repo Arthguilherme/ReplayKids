@@ -89,7 +89,7 @@ class _ChatPageState extends State<ChatPage> {
     final texto = _textoController.text.trim();
     if (texto.isEmpty) return;
 
-    if (ProfanityFilter.contemPalavrао(texto)) {
+    if (ProfanityFilter.contemPalavrao(texto)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(

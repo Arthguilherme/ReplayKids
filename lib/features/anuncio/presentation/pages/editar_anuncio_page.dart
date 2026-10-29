@@ -38,13 +38,23 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
   bool _salvando = false;
 
   final _categorias = [
-    'Brinquedos', 'Roupas', 'Carrinhos',
-    'Móveis', 'Livros', 'Calçados', 'Acessórios', 'Outros',
+    'Brinquedos',
+    'Roupas',
+    'Carrinhos',
+    'Móveis',
+    'Livros',
+    'Calçados',
+    'Acessórios',
+    'Outros',
   ];
 
   final _faixas = [
-    '0-6m', '6-12m', '1-2 anos',
-    '2-4 anos', '4-6 anos', '6+ anos',
+    '0-6m',
+    '6-12m',
+    '1-2 anos',
+    '2-4 anos',
+    '4-6 anos',
+    '6+ anos',
   ];
 
   @override
@@ -67,7 +77,8 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
           children: [
             const SizedBox(height: 8),
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: AppColors.neutral200,
                 borderRadius: BorderRadius.circular(99),
@@ -84,8 +95,8 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt_outlined,
-                  color: AppColors.c600),
+              leading:
+                  const Icon(Icons.camera_alt_outlined, color: AppColors.c600),
               title: const Text('Tirar foto'),
               onTap: () async {
                 Navigator.pop(context);
@@ -124,10 +135,10 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
       final urlsFinais = <String>[];
       for (final foto in _fotos) {
         if (foto is String) {
-          urlsFinais.add(foto); 
+          urlsFinais.add(foto);
         } else {
           final url = await _storage.uploadFoto(foto.path);
-          urlsFinais.add(url); 
+          urlsFinais.add(url);
         }
       }
 
@@ -153,7 +164,7 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
             backgroundColor: AppColors.c600,
           ),
         );
-        Navigator.maybePop(context, true); 
+        Navigator.maybePop(context, true);
       }
     } catch (e) {
       if (mounted) {
@@ -190,7 +201,8 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
             onPressed: _salvando ? null : _salvar,
             child: _salvando
                 ? const SizedBox(
-                    width: 20, height: 20,
+                    width: 20,
+                    height: 20,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: AppColors.c500),
                   )
@@ -209,11 +221,15 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.fromLTRB(
+          20,
+          20,
+          20,
+          MediaQuery.of(context).padding.bottom + 20,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-         
             const Text('Fotos',
                 style: TextStyle(
                     fontSize: 13,
@@ -248,18 +264,15 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
             ),
             Text(
               '${_fotos.length}/3 fotos',
-              style: const TextStyle(
-                  fontSize: 11, color: AppColors.neutral400),
+              style: const TextStyle(fontSize: 11, color: AppColors.neutral400),
             ),
             const SizedBox(height: 20),
-
             LabeledField(
               label: 'Título',
               hint: 'Ex: Ursinho de pelúcia',
               controller: _tituloController,
             ),
             const SizedBox(height: 12),
-
             const Text('Descrição',
                 style: TextStyle(
                     fontSize: 12,
@@ -271,8 +284,8 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               maxLines: 4,
               decoration: InputDecoration(
                 hintText: 'Conte mais sobre o produto...',
-                hintStyle: const TextStyle(
-                    color: AppColors.neutral400, fontSize: 13),
+                hintStyle:
+                    const TextStyle(color: AppColors.neutral400, fontSize: 13),
                 filled: true,
                 fillColor: Colors.white,
                 enabledBorder: OutlineInputBorder(
@@ -287,7 +300,6 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               ),
             ),
             const SizedBox(height: 16),
-
             const Text('Condição',
                 style: TextStyle(
                     fontSize: 12,
@@ -302,15 +314,13 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
                 return GestureDetector(
                   onTap: () => setState(() => _condicao = c),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       color: sel ? AppColors.c500 : Colors.white,
                       borderRadius: BorderRadius.circular(99),
                       border: Border.all(
-                          color: sel
-                              ? AppColors.c500
-                              : AppColors.neutral200),
+                          color: sel ? AppColors.c500 : AppColors.neutral200),
                     ),
                     child: Text(c,
                         style: TextStyle(
@@ -323,7 +333,6 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               }).toList(),
             ),
             const SizedBox(height: 16),
-
             const Text('Categoria',
                 style: TextStyle(
                     fontSize: 12,
@@ -338,15 +347,13 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
                 return GestureDetector(
                   onTap: () => setState(() => _categoria = c),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       color: sel ? AppColors.c500 : Colors.white,
                       borderRadius: BorderRadius.circular(99),
                       border: Border.all(
-                          color: sel
-                              ? AppColors.c500
-                              : AppColors.neutral200),
+                          color: sel ? AppColors.c500 : AppColors.neutral200),
                     ),
                     child: Text(c,
                         style: TextStyle(
@@ -359,7 +366,6 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               }).toList(),
             ),
             const SizedBox(height: 16),
-
             const Text('Faixa etária',
                 style: TextStyle(
                     fontSize: 12,
@@ -382,9 +388,7 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
                       color: sel ? AppColors.c500 : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: sel
-                              ? AppColors.c500
-                              : AppColors.neutral200),
+                          color: sel ? AppColors.c500 : AppColors.neutral200),
                     ),
                     alignment: Alignment.center,
                     child: Text(f,
@@ -398,7 +402,6 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               }).toList(),
             ),
             const SizedBox(height: 16),
-
             const Text('Tipo de oferta',
                 style: TextStyle(
                     fontSize: 12,
@@ -424,9 +427,7 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(Icons.local_offer_outlined,
-                              color: _isVenda
-                                  ? Colors.white
-                                  : AppColors.c700,
+                              color: _isVenda ? Colors.white : AppColors.c700,
                               size: 18),
                           const SizedBox(height: 6),
                           Text('Venda',
@@ -458,9 +459,7 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(Icons.favorite_border,
-                              color: !_isVenda
-                                  ? Colors.white
-                                  : AppColors.c700,
+                              color: !_isVenda ? Colors.white : AppColors.c700,
                               size: 18),
                           const SizedBox(height: 6),
                           Text('Doação',
@@ -477,7 +476,6 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
               ],
             ),
             const SizedBox(height: 16),
-
             if (_isVenda) ...[
               LabeledField(
                 label: 'Preço',
@@ -499,10 +497,8 @@ class _FotoPreviewEdit extends StatelessWidget {
   final String src;
   final bool isUrl;
   final VoidCallback onRemover;
-  const _FotoPreviewEdit({
-      required this.src,
-      required this.isUrl,
-      required this.onRemover});
+  const _FotoPreviewEdit(
+      {required this.src, required this.isUrl, required this.onRemover});
 
   @override
   Widget build(BuildContext context) {
@@ -516,15 +512,16 @@ class _FotoPreviewEdit extends StatelessWidget {
             child: FotoWidget(src: src),
           ),
           Positioned(
-            top: 4, right: 4,
+            top: 4,
+            right: 4,
             child: GestureDetector(
               onTap: onRemover,
               child: Container(
-                width: 22, height: 22,
+                width: 22,
+                height: 22,
                 decoration: const BoxDecoration(
                     color: Colors.black54, shape: BoxShape.circle),
-                child: const Icon(Icons.close,
-                    size: 14, color: Colors.white),
+                child: const Icon(Icons.close, size: 14, color: Colors.white),
               ),
             ),
           ),
@@ -567,8 +564,7 @@ class _SlotVazio extends StatelessWidget {
                             color: AppColors.c600)),
                   ],
                 )
-              : const Icon(Icons.image_outlined,
-                  color: AppColors.neutral300),
+              : const Icon(Icons.image_outlined, color: AppColors.neutral300),
         ),
       ),
     );

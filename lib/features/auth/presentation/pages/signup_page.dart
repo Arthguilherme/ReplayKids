@@ -5,6 +5,7 @@ import 'package:replaykids/core/routes/app_router.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/core/widgets/labeled_field.dart';
 import 'package:replaykids/features/auth/presentation/controllers/signup_controller.dart';
+import 'package:replaykids/core/utils/validators.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -24,6 +25,8 @@ class _SignupPageState extends State<SignupPage> {
   String _cidadeSelecionada = 'Matinhos, PR';
   String _tipoConta = 'pessoa_fisica';
   bool _aceitouTermos = false;
+  String? _erroEmail;
+  String? _erroSenha;
 
   static const _cidades = [
     'Paranaguá, PR',
@@ -52,6 +55,14 @@ class _SignupPageState extends State<SignupPage> {
       );
       return;
     }
+
+    final erroEmail = Validators.email(_emailController.text);
+    final erroSenha = Validators.senha(_senhaController.text);
+    setState(() {
+      _erroEmail = erroEmail;
+      _erroSenha = erroSenha;
+    });
+    if (erroEmail != null || erroSenha != null) return;
 
     await _controller.cadastrar(
       nome: _nomeController.text.trim(),
@@ -107,7 +118,6 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               ),
               const SizedBox(height: 16),
-
               const Text(
                 'Criar conta',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -118,7 +128,6 @@ class _SignupPageState extends State<SignupPage> {
                 style: TextStyle(color: AppColors.neutral600, fontSize: 13),
               ),
               const SizedBox(height: 22),
-
               LabeledField(
                 label: 'Nome completo',
                 hint: 'Digite seu nome completo',
@@ -126,25 +135,24 @@ class _SignupPageState extends State<SignupPage> {
                 controller: _nomeController,
               ),
               const SizedBox(height: 10),
-
               LabeledField(
                 label: 'E-mail',
                 hint: 'seuemail@email.com',
                 icon: Icons.mail_outline,
                 controller: _emailController,
                 keyboard: TextInputType.emailAddress,
+                errorText: _erroEmail,
               ),
               const SizedBox(height: 10),
-
               LabeledField(
                 label: 'Senha',
                 hint: 'Mínimo 8 caracteres',
                 icon: Icons.lock_outline,
                 controller: _senhaController,
                 obscure: true,
+                errorText: _erroSenha,
               ),
               const SizedBox(height: 10),
-
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -197,7 +205,6 @@ class _SignupPageState extends State<SignupPage> {
                 ],
               ),
               const SizedBox(height: 10),
-
               LabeledField(
                 label: 'Número de telefone',
                 hint: '(41) 99999-0000',
@@ -206,9 +213,7 @@ class _SignupPageState extends State<SignupPage> {
                 keyboard: TextInputType.phone,
               ),
               const SizedBox(height: 14),
-
               const SizedBox(height: 10),
-
               const Padding(
                 padding: EdgeInsets.only(left: 4, bottom: 6),
                 child: Text(
@@ -304,7 +309,6 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ],
               ),
-
               if (_tipoConta == 'bazar') ...[
                 const SizedBox(height: 10),
                 LabeledField(
@@ -314,7 +318,6 @@ class _SignupPageState extends State<SignupPage> {
                   controller: _nomeEstabelecimentoController,
                 ),
               ],
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -376,7 +379,6 @@ class _SignupPageState extends State<SignupPage> {
                 ],
               ),
               const SizedBox(height: 18),
-
               if (_controller.mensagemErro != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -385,7 +387,6 @@ class _SignupPageState extends State<SignupPage> {
                     style: const TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ),
-
               SizedBox(
                 height: 48,
                 width: double.infinity,

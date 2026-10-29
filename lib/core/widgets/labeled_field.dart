@@ -9,6 +9,7 @@ class LabeledField extends StatelessWidget {
   final TextInputType? keyboard;
   final TextEditingController? controller;
   final Widget? suffixIcon;
+  final String? errorText;
 
   const LabeledField({
     super.key,
@@ -19,6 +20,7 @@ class LabeledField extends StatelessWidget {
     this.keyboard,
     this.controller,
     this.suffixIcon,
+    this.errorText,
   });
 
   @override
@@ -44,7 +46,8 @@ class LabeledField extends StatelessWidget {
           keyboardType: keyboard,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: AppColors.neutral400, fontSize: 13),
+            hintStyle:
+                const TextStyle(color: AppColors.neutral400, fontSize: 13),
             prefixIcon: icon != null
                 ? Icon(icon, size: 18, color: AppColors.neutral400)
                 : null,
@@ -60,6 +63,15 @@ class LabeledField extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(color: AppColors.c400, width: 1.5),
+            ),
+            errorText: errorText,
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Colors.red, width: 1.5),
             ),
           ),
         ),

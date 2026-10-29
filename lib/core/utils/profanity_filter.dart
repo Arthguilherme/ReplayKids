@@ -11,7 +11,7 @@ class ProfanityFilter {
     'inútil', 'burro', 'burra', 'fdp', 'vsf', 'pqp', 'krl',
   ];
 
-  static bool contemPalavrао(String texto) {
+  static bool contemPalavrao(String texto) {
     final textoNormalizado = _normalizar(texto);
     return _palavroes.any((p) => textoNormalizado.contains(_normalizar(p)));
   }
