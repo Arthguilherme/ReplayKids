@@ -5,6 +5,8 @@ import 'core/theme/app_colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:replaykids/core/notifications/push_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -21,6 +23,7 @@ void main() async {
   );
 
   setupInjector();
+  await injector.get<PushService>().iniciarListeners(); 
   runApp(const ReplayKidsApp());
 }
 

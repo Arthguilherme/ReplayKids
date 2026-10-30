@@ -25,7 +25,9 @@ class _MainPageState extends State<MainPage> {
    @override
   void initState() {
     super.initState();
-    injector.get<PushService>().registrar();
+    final push = injector.get<PushService>();
+    push.registrar();
+    push.abrirPendente();
   }
 
   @override
