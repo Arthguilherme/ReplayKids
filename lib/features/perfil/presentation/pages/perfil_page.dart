@@ -10,6 +10,7 @@ import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.da
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/core/widgets/foto_widget.dart';
 import 'package:replaykids/features/perfil/presentation/pages/editar_perfil_page.dart';
+import 'package:replaykids/core/notifications/push_service.dart';
 
 
 class PerfilPage extends StatefulWidget {
@@ -74,6 +75,7 @@ class _PerfilPageState extends State<PerfilPage> {
     );
 
     if (confirmar == true && mounted) {
+      await injector.get<PushService>().remover();
       await _perfilDatasource.sair();
       if (mounted) context.go(AppRouter.login);
     }

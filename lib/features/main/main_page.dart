@@ -9,6 +9,7 @@ import 'package:replaykids/features/chat/presentation/pages/chat_list_page.dart'
 import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.dart';
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
+import 'package:replaykids/core/notifications/push_service.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -20,6 +21,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _abaAtual = 0;
   final _feedKey = GlobalKey<_FeedViewState>();
+
+   @override
+  void initState() {
+    super.initState();
+    injector.get<PushService>().registrar();
+  }
 
   @override
   Widget build(BuildContext context) {
