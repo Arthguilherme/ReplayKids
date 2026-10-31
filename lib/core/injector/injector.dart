@@ -15,6 +15,7 @@ import '../../features/favoritos/data/datasources/favoritos_datasource.dart';
 import '../../features/chat/datasources/chat_datasource.dart';
 import '../../core/storage/storage_datasource.dart';
 import '../notifications/push_service.dart';
+import '../notifications/nao_lidas_service.dart';
 
 final injector = AutoInjector();
 bool _initialized = false;
@@ -38,11 +39,10 @@ void setupInjector() {
 
   injector.addSingleton(PerfilDatasource.new);
   injector.addSingleton(FavoritosDatasource.new);
-  
   injector.addSingleton<ChatDatasource>(ChatDatasource.new);
 
   injector.addSingleton(PushService.new);
-
+  injector.addSingleton(NaoLidasService.new);
   
   
   injector.commit();

@@ -76,6 +76,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
     if (confirmar == true && mounted) {
       await injector.get<PushService>().remover();
+      await injector.get<NaoLidasService>().parar();
       await _perfilDatasource.sair();
       if (mounted) context.go(AppRouter.login);
     }

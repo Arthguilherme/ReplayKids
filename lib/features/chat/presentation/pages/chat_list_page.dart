@@ -3,6 +3,7 @@ import 'package:replaykids/core/injector/injector.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/features/chat/datasources/chat_datasource.dart';
 import 'chat_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatListPage extends StatefulWidget {
   const ChatListPage({super.key});
@@ -106,6 +107,10 @@ class _ChatListPageState extends State<ChatListPage> {
                               final ultimaMensagem = mensagens.isNotEmpty
                                   ? mensagens.last['texto'] as String
                                   : 'Nenhuma mensagem ainda';
+                              final meuId = Supabase.instance.client.auth.currentUser?.id;
+                              final naoLidas = mensagens
+                                  .where((m) => m['lida'] == false && m['remetente_id'] != meuId)
+                                  .length;
 
                               return ListTile(
                                 contentPadding: const EdgeInsets.symmetric(
@@ -142,11 +147,24 @@ class _ChatListPageState extends State<ChatListPage> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                trailing: const Icon(
-                                  Icons.chevron_right_rounded,
-                                  color: AppColors.neutral400,
-                                ),
-                                onTap: () => Navigator.push(
+                                trailing: naoLidas > 0
+                                  ? Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.c500,
+                                        borderRadius: BorderRadius.circular(99),
+                                      ),
+                                      child: Text(
+                                        '$naoLidas',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    )
+                                  : const Icon(Icons.chevron_right_rounded, color: AppColors.neutral400),
+                                  onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => ChatPage(

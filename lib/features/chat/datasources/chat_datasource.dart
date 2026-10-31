@@ -44,7 +44,7 @@ class ChatDatasource {
           vendedor_id,
           created_at,
           anuncios(titulo, fotos),
-          mensagens(texto, created_at, remetente_id)
+          mensagens(texto, created_at, remetente_id, lida)
         ''')
         .or('comprador_id.eq.$usuarioId,vendedor_id.eq.$usuarioId')
         .order('created_at', ascending: false);
@@ -127,4 +127,12 @@ class ChatDatasource {
         )
         .subscribe();
   }
+
+  Future<void> marcarComoLidas(int conversaId) async {
+  await _supabase.rpc(
+    'marcar_conversa_como_lida',
+    params: {'p_conversa_id': conversaId},
+  );
+}
+
 }

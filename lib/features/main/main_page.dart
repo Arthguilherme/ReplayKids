@@ -10,6 +10,7 @@ import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:replaykids/core/notifications/push_service.dart';
+import '../notifications/nao_lidas_service.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -28,6 +29,7 @@ class _MainPageState extends State<MainPage> {
     final push = injector.get<PushService>();
     push.registrar();
     push.abrirPendente();
+    injector.get<NaoLidasService>().iniciar();
   }
 
   @override
@@ -91,9 +93,9 @@ class _MainPageState extends State<MainPage> {
               ),
               label: '',
             ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline_rounded),
-              activeIcon: Icon(Icons.chat_bubble_rounded),
+            BottomNavigationBarItem(
+              icon: const _IconeChat(ativo: false),
+              activeIcon: const _IconeChat(ativo: true),
               label: 'Chat',
             ),
             const BottomNavigationBarItem(
@@ -557,6 +559,28 @@ class _AnuncioCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _IconeChat extends StatelessWidget {
+  final bool ativo;
+  const _IconeChat({required this.ativo});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: injector.get<NaoLidasService>().total,
+      builder: (_, n, __) => Badge(
+        isLabelVisible: n > 0,
+        label: Text(n > 99 ? '99+' : '$n'),
+        backgroundColor: Colors.red,
+        child: Icon(
+          ativo
+              ? Icons.chat_bubble_rounded
+              : Icons.chat_bubble_outline_rounded,
         ),
       ),
     );

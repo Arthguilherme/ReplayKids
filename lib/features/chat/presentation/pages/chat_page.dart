@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:replaykids/core/utils/profanity_filter.dart';
+import '../notifications/nao_lidas_service.dart';
 
 class ChatPage extends StatefulWidget {
   final int conversaId;
@@ -61,6 +62,7 @@ class _ChatPageState extends State<ChatPage> {
     final mensagens = await _datasource.listarMensagens(widget.conversaId);
     setState(() => _mensagens = mensagens);
     _scrollParaBaixo();
+    _marcarLidas();
   }
 
   void _escutarMensagens() {
@@ -69,6 +71,9 @@ class _ChatPageState extends State<ChatPage> {
       onNovaMensagem: (mensagem) {
         setState(() => _mensagens.add(mensagem));
         _scrollParaBaixo();
+        if (mensagem['remetente_id'] != _usuarioAtual?.id) {
+          _marcarLidas(); 
+  }
       },
     );
   }
@@ -83,6 +88,11 @@ class _ChatPageState extends State<ChatPage> {
         );
       }
     });
+  }
+
+  Future<void> _marcarLidas() async {
+    await _datasource.marcarComoLidas(widget.conversaId);
+    injector.get<NaoLidasService>().atualizar();
   }
 
   Future<void> _enviarMensagem() async {
