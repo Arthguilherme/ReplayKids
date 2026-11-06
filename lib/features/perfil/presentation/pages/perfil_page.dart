@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/core/widgets/foto_widget.dart';
 import 'package:replaykids/features/perfil/presentation/pages/editar_perfil_page.dart';
 import 'package:replaykids/core/notifications/push_service.dart';
+import 'package:replaykids/core/notifications/nao_lidas_service.dart';
 
 
 class PerfilPage extends StatefulWidget {

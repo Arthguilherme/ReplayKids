@@ -44,7 +44,7 @@ class ChatDatasource {
           vendedor_id,
           created_at,
           anuncios(titulo, fotos),
-          mensagens(texto, created_at, remetente_id, lida)
+          mensagens(texto, created_at, remetente_id, lida, tipo)
         ''')
         .or('comprador_id.eq.$usuarioId,vendedor_id.eq.$usuarioId')
         .order('created_at', ascending: false);

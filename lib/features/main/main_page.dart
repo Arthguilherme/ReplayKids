@@ -10,7 +10,7 @@ import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:replaykids/core/notifications/push_service.dart';
-import '../notifications/nao_lidas_service.dart';
+import 'package:replaykids/core/notifications/nao_lidas_service.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

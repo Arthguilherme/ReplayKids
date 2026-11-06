@@ -12,9 +12,15 @@ class PerfilDatasource {
 
     final perfil = await _supabase
         .from('perfis')
-        .select()
+        .select('nome, cidade, tipo, nome_estabelecimento, foto_url')
         .eq('id', usuario.id)
         .single();
+
+    final privado = await _supabase
+        .from('perfis_privados')
+        .select('telefone')
+        .eq('id', usuario.id)
+        .maybeSingle();
 
     return {
       'id': usuario.id,
@@ -26,7 +32,7 @@ class PerfilDatasource {
       'tipo': perfil['tipo'],
       'nome_estabelecimento': perfil['nome_estabelecimento'],
     };
-    debugPrint('Perfil completo: $perfil');
+    
   }
 
   Future<void> sair() async {
@@ -41,12 +47,16 @@ Future<void> atualizarPerfil({
   final usuarioId = _supabase.auth.currentUser?.id;
   if (usuarioId == null) throw Exception('Usuário não autenticado');
 
-  await _supabase.from('perfis').update({
-    'nome': nome,
-    'telefone': telefone,
-    'cidade': cidade,
-  }).eq('id', usuarioId);
+  await _supabase
+    .from('perfis')
+    .update({'nome': nome, 'cidade': cidade})
+    .eq('id', usuarioId);
+
+  await _supabase
+    .from('perfis_privados')
+    .upsert({'id': usuarioId, 'telefone': telefone});
 }
+
 
 Future<String> uploadFotoPerfil(String caminhoLocal) async {
   final usuarioId = _supabase.auth.currentUser?.id;
