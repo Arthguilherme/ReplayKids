@@ -29,7 +29,7 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
     super.dispose();
   }
 
-    void _mostrarOpcoesFoto() {
+  void _mostrarOpcoesFoto() {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -60,8 +60,8 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt_outlined,
-                  color: AppColors.c600),
+              leading:
+                  const Icon(Icons.camera_alt_outlined, color: AppColors.c600),
               title: const Text('Tirar foto'),
               onTap: () async {
                 Navigator.pop(context);
@@ -75,7 +75,7 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return buildPublishScaffold(
@@ -86,9 +86,16 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
       leading: Icons.close,
       primaryLabel: 'Próximo Passo',
       onPrimary: () {
-        _controller.titulo = _tituloController.text;
+        if (_controller.fotos.isEmpty) {
+          _avisar(context, 'Adicione pelo menos uma foto do item');
+          return;
+        }
+        if (_tituloController.text.trim().isEmpty) {
+          _avisar(context, 'Informe um título para o anúncio');
+          return;
+        }
+        _controller.titulo = _tituloController.text.trim();
         _controller.descricao = _descricaoController.text;
-
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const PublishStep2Page()),
@@ -100,7 +107,7 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
           const SectionLabel('Fotos do item'),
           Row(
             children: [
-               ...List.generate(3, (i) {
+              ...List.generate(3, (i) {
                 final temFoto = i < _controller.fotos.length;
                 return Expanded(
                   child: Padding(
@@ -124,17 +131,15 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
               }),
             ],
           ),
-
           const SizedBox(height: 6),
           Text(
             '${_controller.fotos.length}/3 fotos adicionadas',
-            style: const TextStyle( 
+            style: const TextStyle(
               fontSize: 11,
               color: AppColors.neutral400,
             ),
           ),
           const SizedBox(height: 18),
-
           const SectionLabel('Título'),
           LabeledField(
             label: '',
@@ -142,7 +147,6 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
             controller: _tituloController,
           ),
           const SizedBox(height: 12),
-
           const SectionLabel('Descrição'),
           TextField(
             controller: _descricaoController,
@@ -164,7 +168,6 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
             ),
           ),
           const SizedBox(height: 14),
-
           const SectionLabel('Condição'),
           Wrap(
             spacing: 8,
@@ -182,6 +185,12 @@ class _PublishStep1PageState extends State<PublishStep1Page> {
       ),
     );
   }
+}
+
+void _avisar(BuildContext context, String mensagem) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(mensagem)),
+  );
 }
 
 class _PhotoSlot extends StatelessWidget {
@@ -258,8 +267,7 @@ class _FotoPreview extends StatelessWidget {
                   color: Colors.black54,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.close,
-                    size: 14, color: Colors.white),
+                child: const Icon(Icons.close, size: 14, color: Colors.white),
               ),
             ),
           ),

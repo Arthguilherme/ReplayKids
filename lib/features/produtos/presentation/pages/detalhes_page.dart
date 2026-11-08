@@ -115,11 +115,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
     } catch (e) {
       setState(() => _nomeVendedor = 'Vendedor');
     }
-    Future<void> _buscarVendedor() async {
-      final vendedorId = widget.anuncio.usuarioId;
-      debugPrint('usuarioId do anúncio: $vendedorId');
-      
-    }
+    
   }
 
   void _mostrarOpcoes() {
@@ -164,13 +160,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                 },
               ),
             ],
-            if (!ehDono)
-              ListTile(
-                leading: const Icon(Icons.flag_outlined,
-                    color: AppColors.neutral700),
-                title: const Text('Denunciar anúncio'),
-                onTap: () => Navigator.pop(context),
-              ),
           ],
         ),
       ),
@@ -256,6 +245,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           onTap: () => Navigator.maybePop(context),
                         ),
                       ),
+                     if (ehDono)
                       Positioned(
                         top: 48,
                         right: 16,
@@ -264,6 +254,7 @@ class _DetalhesPageState extends State<DetalhesPage> {
                           onTap: _mostrarOpcoes,
                         ),
                       ),
+
                       if (anuncio.fotos.length > 1)
                         Positioned(
                           bottom: 12,

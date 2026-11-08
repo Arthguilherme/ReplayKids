@@ -25,19 +25,31 @@ class PublishStep3Page extends StatelessWidget {
       primaryLabel: 'Publicar agora',
       primaryIcon: Icons.check,
       onPrimary: () async {
-        await controller.publicar(); 
-        if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        try {
+          await controller.publicar();
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Não foi possível publicar o anúncio. Tente novamente.',
+                ),
+              ),
+            );
+          }
+          return;
+        }
 
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Anúncio publicado com sucesso!'),
             backgroundColor: AppColors.c600,
-            ),
-          );
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
+          ),
+        );
+        Navigator.of(context).popUntil((route) => route.isFirst);
       },
-      
       body: Builder(builder: (context) {
         final titulo =
             controller.titulo.isEmpty ? 'Sem título' : controller.titulo;

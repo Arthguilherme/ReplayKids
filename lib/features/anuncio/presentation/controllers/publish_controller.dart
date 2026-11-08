@@ -55,6 +55,10 @@ class PublishController {
       }
     }
 
+    if (urlsFotos.isEmpty) {
+      throw Exception('Nenhuma foto foi enviada');
+    }    
+
     await repository.publicar(
       AnuncioEntity(
         id: 0,

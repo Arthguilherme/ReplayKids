@@ -6,6 +6,8 @@ import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/core/widgets/labeled_field.dart';
 import 'package:replaykids/features/auth/presentation/controllers/signup_controller.dart';
 import 'package:replaykids/core/utils/validators.dart';
+import 'package:flutter/gestures.dart';
+import 'package:replaykids/features/diretrizes/presentation/pages/diretrizes_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -27,6 +29,19 @@ class _SignupPageState extends State<SignupPage> {
   bool _aceitouTermos = false;
   String? _erroEmail;
   String? _erroSenha;
+  String? _erroNome;
+  String? _erroTelefone;
+  String? _erroEstabelecimento;
+
+  late final TapGestureRecognizer _termosTap = TapGestureRecognizer()
+    ..onTap = _abrirDiretrizes;
+
+  void _abrirDiretrizes() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const DiretrizesPage()),
+    );
+  }
 
   static const _cidades = [
     'Paranaguá, PR',
@@ -45,6 +60,7 @@ class _SignupPageState extends State<SignupPage> {
     _senhaController.dispose();
     _telefoneController.dispose();
     _nomeEstabelecimentoController.dispose();
+    _termosTap.dispose();
     super.dispose();
   }
 
@@ -55,14 +71,28 @@ class _SignupPageState extends State<SignupPage> {
       );
       return;
     }
-
+    final erroNome = Validators.nome(_nomeController.text);
     final erroEmail = Validators.email(_emailController.text);
     final erroSenha = Validators.senha(_senhaController.text);
+    final erroTelefone = Validators.telefone(_telefoneController.text);
+    final erroEstabelecimento = _tipoConta == 'bazar'
+        ? Validators.nome(_nomeEstabelecimentoController.text)
+            ?.replaceFirst('seu nome', 'o nome do estabelecimento')
+        : null;
     setState(() {
       _erroEmail = erroEmail;
       _erroSenha = erroSenha;
+      _erroNome = erroNome;
+      _erroTelefone = erroTelefone;
+      _erroEstabelecimento = erroEstabelecimento;
     });
-    if (erroEmail != null || erroSenha != null) return;
+    if (erroEmail != null ||
+        erroSenha != null ||
+        erroNome != null ||
+        erroTelefone != null ||
+        erroEstabelecimento != null) {
+      return;
+    }
 
     await _controller.cadastrar(
       nome: _nomeController.text.trim(),
@@ -133,6 +163,7 @@ class _SignupPageState extends State<SignupPage> {
                 hint: 'Digite seu nome completo',
                 icon: Icons.person_outline,
                 controller: _nomeController,
+                errorText: _erroNome,
               ),
               const SizedBox(height: 10),
               LabeledField(
@@ -211,6 +242,7 @@ class _SignupPageState extends State<SignupPage> {
                 icon: Icons.phone_outlined,
                 controller: _telefoneController,
                 keyboard: TextInputType.phone,
+                errorText: _erroTelefone,
               ),
               const SizedBox(height: 14),
               const SizedBox(height: 10),
@@ -316,6 +348,7 @@ class _SignupPageState extends State<SignupPage> {
                   hint: 'Ex: Brechó do Fulano',
                   icon: Icons.storefront_outlined,
                   controller: _nomeEstabelecimentoController,
+                  errorText: _erroEstabelecimento,
                 ),
               ],
               Row(
@@ -345,7 +378,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Expanded(
+                  Expanded(
                     child: Text.rich(
                       TextSpan(
                         style: TextStyle(
@@ -356,6 +389,7 @@ class _SignupPageState extends State<SignupPage> {
                           TextSpan(text: 'Li e aceito os '),
                           TextSpan(
                             text: 'Termos de Uso',
+                            recognizer: _termosTap,
                             style: TextStyle(
                               color: AppColors.c700,
                               fontWeight: FontWeight.w700,
@@ -365,6 +399,7 @@ class _SignupPageState extends State<SignupPage> {
                           TextSpan(text: ' e a '),
                           TextSpan(
                             text: 'Política de Privacidade',
+                            recognizer: _termosTap,
                             style: TextStyle(
                               color: AppColors.c700,
                               fontWeight: FontWeight.w700,

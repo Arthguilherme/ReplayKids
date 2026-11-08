@@ -12,7 +12,7 @@ import 'package:replaykids/core/widgets/foto_widget.dart';
 import 'package:replaykids/features/perfil/presentation/pages/editar_perfil_page.dart';
 import 'package:replaykids/core/notifications/push_service.dart';
 import 'package:replaykids/core/notifications/nao_lidas_service.dart';
-
+import 'package:replaykids/features/diretrizes/presentation/pages/diretrizes_page.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
@@ -269,7 +269,11 @@ class _PerfilPageState extends State<PerfilPage> {
                     _OpcaoItem(
                       icon: Icons.help_outline_rounded,
                       label: 'Central de Ajuda',
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const DiretrizesPage()),
+                      ) ,
                     ),
                     const SizedBox(height: 8),
                     _OpcaoItem(

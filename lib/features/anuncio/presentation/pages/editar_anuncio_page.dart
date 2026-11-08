@@ -129,6 +129,18 @@ class _EditarAnuncioPageState extends State<EditarAnuncioPage> {
 
   Future<void> _salvar() async {
     if (_salvando) return;
+    if (_tituloController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Informe um título para o anúncio')),
+      );
+      return;
+    }
+    if (_fotos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('O anúncio precisa ter pelo menos uma foto')),
+      );
+      return;
+    }
     setState(() => _salvando = true);
 
     try {
