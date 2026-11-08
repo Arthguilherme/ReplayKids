@@ -439,7 +439,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                 border: Border(top: BorderSide(color: AppColors.neutral100)),
               ),
               child: ehDono
-                  // Dono vê botão de apagar
                   ? SizedBox(
                       height: 48,
                       width: double.infinity,
@@ -458,7 +457,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
                         ),
                       ),
                     )
-                  // Outros veem Tenho interesse + favoritar
                   : Row(
                       children: [
                         Expanded(
