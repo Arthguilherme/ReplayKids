@@ -49,19 +49,15 @@ class PushService {
 
   int? _conversaPendente;
 
-/// Chamar uma vez no main(), depois do setupInjector().
 Future<void> iniciarListeners() async {
-  // App em segundo plano: abre direto
   FirebaseMessaging.onMessageOpenedApp.listen(_tratarMensagem);
 
-  // App fechado: guarda para abrir quando a MainPage estiver pronta
   final inicial = await _fcm.getInitialMessage();
   if (inicial != null) {
     _conversaPendente = int.tryParse(inicial.data['conversa_id'] ?? '');
   }
 }
 
-/// Chamada pela MainPage ao iniciar.
 void abrirPendente() {
   final id = _conversaPendente;
   if (id == null) return;

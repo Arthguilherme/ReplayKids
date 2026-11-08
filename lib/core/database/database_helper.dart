@@ -22,7 +22,7 @@ class DatabaseHelper {
   }
 
   static Future<void> _onCreate(Database db, int version) async {
-    // Tabela de usuários
+
     await db.execute('''
       CREATE TABLE usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +34,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Tabela de anúncios
     await db.execute('''
       CREATE TABLE anuncios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

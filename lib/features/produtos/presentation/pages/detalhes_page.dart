@@ -427,7 +427,6 @@ class _DetalhesPageState extends State<DetalhesPage> {
             ],
           ),
 
-          // Botões do fundo
           Positioned(
             bottom: 0,
             left: 0,
