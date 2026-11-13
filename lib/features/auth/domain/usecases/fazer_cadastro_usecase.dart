@@ -19,6 +19,11 @@ class FazerCadastroUsecase {
       throw Exception('Senha deve ter pelo menos 6 caracteres');
     }
 
+    if (usuario.tipo == 'bazar' &&
+         (usuario.nomeEstabelecimento ?? '').trim().isEmpty) {
+      throw Exception('Informe o nome do estabelecimento');
+    }
+    
     return await repository.cadastrar(usuario);
   }
 }

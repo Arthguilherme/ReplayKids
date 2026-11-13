@@ -16,6 +16,7 @@ import '../../features/chat/datasources/chat_datasource.dart';
 import '../../core/storage/storage_datasource.dart';
 import '../notifications/push_service.dart';
 import '../notifications/nao_lidas_service.dart';
+import '../location/localizacao_service.dart';
 
 final injector = AutoInjector();
 bool _initialized = false;
@@ -44,6 +45,7 @@ void setupInjector() {
   injector.addSingleton(PushService.new);
   injector.addSingleton(NaoLidasService.new);
   
+  injector.addSingleton(LocalizacaoService.new);
   
   injector.commit();
 }

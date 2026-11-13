@@ -3,6 +3,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_datasource.dart';
 import '../models/usuario_model.dart';
 
+
 class AuthRepositoryImpl implements AuthRepository {
   final AuthDatasource datasource;
 
@@ -22,6 +23,8 @@ class AuthRepositoryImpl implements AuthRepository {
       senha: usuario.senha,
       telefone: usuario.telefone,
       cidade: usuario.cidade,
+      tipo: usuario.tipo,                              
+      nomeEstabelecimento: usuario.nomeEstabelecimento,
     );
 
     return await datasource.cadastrar(model);

@@ -10,6 +10,8 @@ import 'package:replaykids/features/favoritos/presentation/pages/favoritos_page.
 import 'package:replaykids/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:replaykids/core/notifications/push_service.dart';
+import 'package:replaykids/core/location/localizacao_service.dart';
+import 'package:replaykids/features/perfil/data/datasources/perfil_datasource.dart';
 import 'package:replaykids/core/notifications/nao_lidas_service.dart';
 
 class MainPage extends StatefulWidget {
@@ -123,7 +125,8 @@ class _FeedViewState extends State<_FeedView> {
   String _textoBusca = '';
   late final _buscaController = TextEditingController();
   List<AnuncioEntity> _anuncios = [];
-
+  final _localizacao = injector.get<LocalizacaoService>();
+  bool _detectando = true;
 
   final _categorias = [
     'Todos',
@@ -154,6 +157,34 @@ class _FeedViewState extends State<_FeedView> {
   void initState() {
     super.initState();
     _carregarAnuncios();
+    _definirMunicipioInicial();
+  }
+
+  Future<void> _definirMunicipioInicial() async {
+    final r = await _localizacao.detectar();
+
+    String? escolhido;
+    if (r.localizou) {
+      escolhido = r.municipio ?? 'Todos'; 
+    } else {
+      escolhido = await _cidadeDoPerfil(); 
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _municipioSelecionado = escolhido;
+      _detectando = false;
+    });
+  }
+
+  Future<String?> _cidadeDoPerfil() async {
+    try {
+      final perfil = await injector.get<PerfilDatasource>().buscarPerfil();
+      final cidade = perfil['cidade'] as String?;
+      return _municipios.contains(cidade) ? cidade : null;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -282,6 +313,7 @@ class _FeedViewState extends State<_FeedView> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: DropdownButtonFormField<String>(
+              key: ValueKey(_municipioSelecionado),
               value: _municipioSelecionado ?? 'Todos',
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.location_on_outlined,
@@ -355,6 +387,11 @@ class _FeedViewState extends State<_FeedView> {
           Expanded(
             child: Builder(
               builder: (context) {
+                 if (_detectando) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.c500),
+                  );
+                }
                 final anuncios = _anunciosFiltrados;
 
                 if (anuncios.isEmpty) {
@@ -391,6 +428,16 @@ class _FeedViewState extends State<_FeedView> {
                             color: AppColors.neutral400,
                           ),
                         ),
+                        if (_textoBusca.isEmpty &&
+                            _municipioSelecionado != null &&
+                            _municipioSelecionado != 'Todos' &&
+                            _anuncios.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: () => setState(() => _municipioSelecionado = 'Todos'),
+                            child: const Text('Ver anúncios de todos os municípios'),
+                          ),
+                        ],
                       ],
                     ),
                   );

@@ -8,6 +8,8 @@ class UsuarioModel extends UsuarioEntity {
     required super.senha,
     super.telefone,
     super.cidade,
+    super.tipo = 'pessoa_fisica',
+    super.nomeEstabelecimento,
   });
 
   factory UsuarioModel.fromMap(Map<String, dynamic> map) {

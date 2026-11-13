@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:replaykids/core/theme/app_colors.dart';
 
-/// Tela com as diretrizes da plataforma, os termos de uso e a política de
-/// privacidade. Atende à RN006 / RF004 e é aberta a partir do cadastro e da
-/// Central de Ajuda.
 class DiretrizesPage extends StatelessWidget {
   const DiretrizesPage({super.key});
 
-  // Ajuste para o e-mail de contato oficial do projeto, se necessário.
   static const _emailContato = 'arth.ssg@gmail.com';
 
   static const _secoes = <_Secao>[
