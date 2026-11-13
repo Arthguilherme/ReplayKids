@@ -331,24 +331,39 @@ class _DetalhesPageState extends State<DetalhesPage> {
                             color: AppColors.c600),
                       ),
                       const SizedBox(height: 10),
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 12,
+                        runSpacing: 4,
                         children: [
-                          const Icon(Icons.location_on_outlined,
-                              size: 14, color: AppColors.neutral500),
-                          const SizedBox(width: 4),
-                          const Text('Litoral do PR',
-                              style: TextStyle(
-                                  fontSize: 12, color: AppColors.neutral500)),
-                          const SizedBox(width: 8),
-                          const Text('•',
-                              style: TextStyle(color: AppColors.neutral400)),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.child_care_outlined,
-                              size: 14, color: AppColors.neutral500),
-                          const SizedBox(width: 4),
-                          Text('Tam. ${anuncio.faixaEtaria}',
-                              style: const TextStyle(
-                                  fontSize: 12, color: AppColors.neutral500)),
+                          if (anuncio.cidadeVendedor != null &&
+                              anuncio.cidadeVendedor!.isNotEmpty)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.location_on_outlined,
+                                    size: 14, color: AppColors.neutral500),
+                                const SizedBox(width: 4),
+                                Text(
+                                  anuncio.cidadeVendedor!,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: AppColors.neutral500),
+                                ),
+                              ],
+                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.child_care_outlined,
+                                  size: 14, color: AppColors.neutral500),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Tam. ${anuncio.faixaEtaria}',
+                                style: const TextStyle(
+                                    fontSize: 12, color: AppColors.neutral500),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
