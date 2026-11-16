@@ -17,6 +17,7 @@ import '../../core/storage/storage_datasource.dart';
 import '../notifications/push_service.dart';
 import '../notifications/nao_lidas_service.dart';
 import '../location/localizacao_service.dart';
+import '../../features/auth/data/datasources/verificacao_email_datasource.dart';
 
 final injector = AutoInjector();
 bool _initialized = false;
@@ -46,6 +47,8 @@ void setupInjector() {
   injector.addSingleton(NaoLidasService.new);
   
   injector.addSingleton(LocalizacaoService.new);
+  
+  injector.addSingleton(VerificacaoEmailDatasource.new);
   
   injector.commit();
 }

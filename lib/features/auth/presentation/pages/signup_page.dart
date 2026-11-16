@@ -109,13 +109,9 @@ class _SignupPageState extends State<SignupPage> {
     if (!mounted) return;
 
     if (_controller.status == SignupStatus.sucesso) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Conta criada com sucesso!'),
-          backgroundColor: AppColors.c600,
-        ),
-      );
-      context.go(AppRouter.login);
+      if (_controller.status == SignupStatus.sucesso) {
+        context.go(AppRouter.verificarEmail, extra: _emailController.text.trim());
+      }
     } else {
       setState(() {});
     }

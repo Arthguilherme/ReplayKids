@@ -7,6 +7,7 @@ import '../../features/main/main_page.dart';
 import '../../features/anuncio/presentation/pages/publish_step1_page.dart';
 import '../../features/splash/splash_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/auth/presentation/pages/verificar_email_page.dart';
 
 class AppRouter {
   static const splash = '/';
@@ -15,6 +16,7 @@ class AppRouter {
   static const feed = '/feed';
   static const publicar = '/publicar'; 
   static const chat = '/chat/:id';
+  static const verificarEmail = '/verificar-email';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -46,6 +48,11 @@ class AppRouter {
           titulo: (state.extra as String?) ?? 'Chat',
         ),
       ),
+      GoRoute(
+        path: verificarEmail,
+        builder: (context, state) =>
+          VerificarEmailPage(email: (state.extra as String?) ?? ''),
+),
     ],
   );
 }

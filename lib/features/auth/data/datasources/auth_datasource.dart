@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:replaykids/core/database/database_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/usuario_model.dart';
+import 'package:replaykids/lib/features/auth/data/datasources/verificacao_email_datasource.dart'
 
 abstract class AuthDatasource {
   Future<UsuarioModel> login(String email, String senha);
@@ -87,31 +88,39 @@ class AuthDatasourceSupabase implements AuthDatasource {
 
   @override
   Future<UsuarioModel> login(String email, String senha) async {
-    final response = await _supabase.auth.signInWithPassword(
-      email: email,
-      password: senha,
-    );
+    try{
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: senha,
+      );
 
-    if (response.user == null) {
-      throw Exception('Email ou senha incorretos');
+      if (response.user == null) {
+        throw Exception('Email ou senha incorretos');
+      }
+
+      final perfil = await _supabase
+          .from('perfis')
+          .select()
+          .eq('id', response.user!.id)
+          .single();
+
+      return UsuarioModel(
+        id: null,
+        nome: perfil['nome'] as String,
+        email: response.user!.email!,
+        senha: '',
+        cidade: perfil['cidade'] as String?
+      );
+    } on AuthApiException catch (e) {
+      if (e.code == 'email_not_confirmed') {
+        throw Exception(kEmailNaoConfirmado);
+      }
+      if (e.code == 'invalid_credentials') {
+        throw Exception('E-mail ou senha incorretos');
+      }
+      throw Exception('Não foi possível entrar. Tente novamente.');
     }
-
-    final perfil = await _supabase
-        .from('perfis')
-        .select()
-        .eq('id', response.user!.id)
-        .single();
-
-    return UsuarioModel(
-      id: null,
-      nome: perfil['nome'] as String,
-      email: response.user!.email!,
-      senha: '',
-      telefone: perfil['telefone'] as String?,
-      cidade: perfil['cidade'] as String?,
-    );
   }
-
   @override
   Future<UsuarioModel> cadastrar(UsuarioModel usuario) async {
     try {
@@ -132,7 +141,9 @@ class AuthDatasourceSupabase implements AuthDatasource {
       if (response.user == null) {
         throw Exception('Erro ao criar conta');
       }
-
+      if ((response.user!.identities ?? []).isEmpty) {
+        throw Exception('Este e-mail já está cadastrado');
+      }
       return UsuarioModel(
         id: null,
         nome: usuario.nome,

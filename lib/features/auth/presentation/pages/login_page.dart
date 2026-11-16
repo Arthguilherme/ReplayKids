@@ -6,6 +6,7 @@ import '../../../../core/routes/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/labeled_field.dart';
 import '../controllers/login_controller.dart';
+import 'package:replaykids/lib/features/auth/data/datasources/verificacao_email_datasource.dart'
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,6 +37,13 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_loginController.status.value == LoginStatus.sucesso && mounted) {
       context.go(AppRouter.feed);
+    } else if (_loginController.mensagemErro.value == kEmailNaoConfirmado &&
+        mounted) {
+      final email = _emailController.text.trim();
+      try {
+        await injector.get<VerificacaoEmailDatasource>().reenviar(email);
+      } catch (_) {}
+      if (mounted) context.go(AppRouter.verificarEmail, extra: email);
     }
   }
 
@@ -111,7 +119,9 @@ class _LoginPageState extends State<LoginPage> {
 
               Watch((context) {
                 final erro = _loginController.mensagemErro.value;
-                if (erro == null) return const SizedBox.shrink();
+                if (erro == null || erro == kEmailNaoConfirmado) {
+                  return const SizedBox.shrink();
+                }
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
