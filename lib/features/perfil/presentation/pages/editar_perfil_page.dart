@@ -6,6 +6,7 @@ import 'package:replaykids/core/theme/app_colors.dart';
 import 'package:replaykids/core/widgets/foto_widget.dart';
 import 'package:replaykids/core/widgets/labeled_field.dart';
 import 'package:replaykids/features/perfil/data/datasources/perfil_datasource.dart';
+import 'package:replaykids/features/perfil/presentation/pages/widgets/secao_localizacao_bazar.dart';
 
 class EditarPerfilPage extends StatefulWidget {
   final Map<String, dynamic> perfil;
@@ -22,6 +23,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       TextEditingController(text: widget.perfil['nome'] as String? ?? '');
   late final _telefoneController =
       TextEditingController(text: widget.perfil['telefone'] as String? ?? '');
+
+  late final _enderecoController =
+      TextEditingController(text: widget.perfil['endereco'] as String? ?? '');
+  double? _lat;
+  double? _lng;
+  bool get _ehBazar => widget.perfil['tipo'] == 'bazar';
 
   late String _cidadeSelecionada =
       widget.perfil['cidade'] as String? ?? 'Matinhos, PR';
@@ -44,12 +51,15 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   void initState() {
     super.initState();
     _fotoAtualUrl = widget.perfil['foto_url'] as String?;
+    _lat = (widget.perfil['lat'] as num?)?.toDouble();
+    _lng = (widget.perfil['lng'] as num?)?.toDouble();
   }
 
   @override
   void dispose() {
     _nomeController.dispose();
     _telefoneController.dispose();
+    _enderecoController.dispose();
     super.dispose();
   }
 
@@ -65,7 +75,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
           children: [
             const SizedBox(height: 8),
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: AppColors.neutral200,
                 borderRadius: BorderRadius.circular(99),
@@ -82,8 +93,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt_outlined,
-                  color: AppColors.c600),
+              leading:
+                  const Icon(Icons.camera_alt_outlined, color: AppColors.c600),
               title: const Text('Tirar foto'),
               onTap: () async {
                 Navigator.pop(context);
@@ -128,6 +139,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         nome: _nomeController.text.trim(),
         telefone: _telefoneController.text.trim(),
         cidade: _cidadeSelecionada,
+        ehBazar: _ehBazar,
+        endereco: _enderecoController.text.trim().isEmpty
+            ? null
+            : _enderecoController.text.trim(),
+        lat: _lat,
+        lng: _lng,
       );
 
       if (mounted) {
@@ -146,7 +163,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         );
       }
     } finally {
-      if (mounted){
+      if (mounted) {
         setState(() => _salvando = false);
       }
     }
@@ -176,7 +193,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
             onPressed: _salvando ? null : _salvar,
             child: _salvando
                 ? const SizedBox(
-                    width: 20, height: 20,
+                    width: 20,
+                    height: 20,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: AppColors.c500),
                   )
@@ -224,17 +242,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                                   size: 48,
                                   color: AppColors.c600,
                                 ),
-                        ),
-                          
-                    
-                    
+                    ),
                   ],
                 ),
               ),
             ),
-            
             const SizedBox(height: 28),
-
             LabeledField(
               label: 'Nome completo',
               hint: 'Seu nome',
@@ -242,7 +255,6 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
               controller: _nomeController,
             ),
             const SizedBox(height: 16),
-
             LabeledField(
               label: 'Telefone',
               hint: '(41) 99999-0000',
@@ -251,7 +263,6 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
               keyboard: TextInputType.phone,
             ),
             const SizedBox(height: 16),
-
             const Padding(
               padding: EdgeInsets.only(left: 4, bottom: 6),
               child: Text(
@@ -285,8 +296,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                   items: _cidades
                       .map((c) => DropdownMenuItem(
                             value: c,
-                            child: Text(c,
-                                style: const TextStyle(fontSize: 13)),
+                            child:
+                                Text(c, style: const TextStyle(fontSize: 13)),
                           ))
                       .toList(),
                   onChanged: (v) {
@@ -297,6 +308,17 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
                 ),
               ),
             ),
+            if (_ehBazar) ...[
+              const SizedBox(height: 24),
+              SecaoLocalizacaoBazar(
+                enderecoController: _enderecoController,
+                temLocalizacao: _lat != null && _lng != null,
+                onCapturada: (lat, lng) {
+                  _lat = lat;
+                  _lng = lng;
+                },
+              ),
+            ],
           ],
         ),
       ),

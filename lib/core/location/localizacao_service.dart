@@ -92,4 +92,27 @@ class LocalizacaoService {
     }
     return menor <= raioMaxKm ? melhor?.nome : null;
   }
+
+Future<Position?> posicaoPrecisa() async {
+  try {
+    if (!await Geolocator.isLocationServiceEnabled()) return null;
+
+    var permissao = await Geolocator.checkPermission();
+    if (permissao == LocationPermission.denied) {
+      permissao = await Geolocator.requestPermission();
+    }
+    if (permissao == LocationPermission.denied ||
+        permissao == LocationPermission.deniedForever) {
+      return null;
+    }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+      timeLimit: const Duration(seconds: 15),
+    );
+  } catch (e) {
+    debugPrint('Erro ao obter posição precisa: $e');
+    return null;
+  }
+}
 }

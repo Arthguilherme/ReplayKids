@@ -7,6 +7,7 @@ import 'package:replaykids/features/anuncio/domain/repositories/anuncio_reposito
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:replaykids/features/produtos/presentation/pages/detalhes_page.dart';
 import 'package:replaykids/core/widgets/foto_widget.dart';
+import 'package:replaykids/core/widgets/como_chegar_card.dart';
 
 class PerfilPublicoPage extends StatefulWidget {
   final String usuarioId;
@@ -121,6 +122,12 @@ debugPrint('TIPO DO PERFIL PÚBLICO: "${perfil?['tipo']}"');
                         ),
 
                         if (_perfil?['tipo'] == 'bazar') ...[
+                          ComoChegarCard(
+                            lat: (_perfil?['lat'] as num?)?.toDouble(),
+                            lng: (_perfil?['lng'] as num?)?.toDouble(),
+                            endereco: _perfil?['endereco'] as String?,
+                            cidade: _perfil?['cidade'] as String?,
+                          ),
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

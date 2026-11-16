@@ -1,4 +1,3 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +11,7 @@ class PerfilDatasource {
 
     final perfil = await _supabase
         .from('perfis')
-        .select('nome, cidade, tipo, nome_estabelecimento, foto_url')
+        .select('nome, cidade, tipo, nome_estabelecimento, foto_url, endereco, lat, lng')
         .eq('id', usuario.id)
         .single();
 
@@ -27,10 +26,13 @@ class PerfilDatasource {
       'email': usuario.email,
       'nome': perfil['nome'],
       'cidade': perfil['cidade'],
-      'telefone': perfil['telefone'],
+      'telefone': privado?['telefone'],
       'foto_url': perfil['foto_url'],
       'tipo': perfil['tipo'],
       'nome_estabelecimento': perfil['nome_estabelecimento'],
+      'endereco': perfil['endereco'],
+      'lat': perfil['lat'],
+      'lng': perfil['lng'],
     };
     
   }
@@ -43,14 +45,21 @@ Future<void> atualizarPerfil({
   required String nome,
   required String telefone,
   required String cidade,
+  bool ehBazar = false,
+  String? endereco,
+  double? lat,
+  double? lng,
 }) async {
   final usuarioId = _supabase.auth.currentUser?.id;
   if (usuarioId == null) throw Exception('Usuário não autenticado');
 
   await _supabase
     .from('perfis')
-    .update({'nome': nome, 'cidade': cidade})
-    .eq('id', usuarioId);
+    .update({
+      'nome': nome, 
+      'cidade': cidade,
+      if (ehBazar) ...{'endereco': endereco, 'lat': lat, 'lng': lng},
+    }).eq('id', usuarioId);
 
   await _supabase
     .from('perfis_privados')
