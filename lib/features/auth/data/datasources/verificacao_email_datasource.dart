@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-const kEmailNaoConfirmado = 'email_nao_confirmado';
+const EmailNaoConfirmado = 'email_nao_confirmado';
 
 class VerificacaoEmailDatasource {
   final _supabase = Supabase.instance.client;

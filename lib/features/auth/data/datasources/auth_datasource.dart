@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:replaykids/core/database/database_helper.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/usuario_model.dart';
-import 'package:replaykids/lib/features/auth/data/datasources/verificacao_email_datasource.dart'
+import 'package:replaykids/features/auth/data/datasources/verificacao_email_datasource.dart';
 
 abstract class AuthDatasource {
   Future<UsuarioModel> login(String email, String senha);
@@ -113,7 +113,7 @@ class AuthDatasourceSupabase implements AuthDatasource {
       );
     } on AuthApiException catch (e) {
       if (e.code == 'email_not_confirmed') {
-        throw Exception(kEmailNaoConfirmado);
+        throw Exception(EmailNaoConfirmado);
       }
       if (e.code == 'invalid_credentials') {
         throw Exception('E-mail ou senha incorretos');

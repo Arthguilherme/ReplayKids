@@ -6,7 +6,7 @@ import '../../../../core/routes/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/labeled_field.dart';
 import '../controllers/login_controller.dart';
-import 'package:replaykids/lib/features/auth/data/datasources/verificacao_email_datasource.dart'
+import 'package:replaykids/features/auth/data/datasources/verificacao_email_datasource.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_loginController.status.value == LoginStatus.sucesso && mounted) {
       context.go(AppRouter.feed);
-    } else if (_loginController.mensagemErro.value == kEmailNaoConfirmado &&
+    } else if (_loginController.mensagemErro.value == EmailNaoConfirmado &&
         mounted) {
       final email = _emailController.text.trim();
       try {
@@ -114,12 +114,28 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
               ),
-
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => context.go(
+                    AppRouter.recuperarSenha,
+                    extra: _emailController.text.trim(),
+                  ),
+                  child: const Text(
+                    'Esqueci minha senha',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.c700,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 8),
 
               Watch((context) {
                 final erro = _loginController.mensagemErro.value;
-                if (erro == null || erro == kEmailNaoConfirmado) {
+                if (erro == null || erro == EmailNaoConfirmado) {
                   return const SizedBox.shrink();
                 }
                 return Padding(
